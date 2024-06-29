@@ -44,7 +44,7 @@ void CustomWidget::addItem()
     if ((widgetList.size() + 1)%2 == 0) {
         itemWidget->setStyleSheet("QWidget { background-color: lightgray; }");
     }else{
-        itemWidget->setStyleSheet("QWidget { background-color: white; }");
+        itemWidget->setStyleSheet("QWidget { background-color: lightyellow; }");
     }
     listWidget->setItemWidget(listItem, itemWidget);
 

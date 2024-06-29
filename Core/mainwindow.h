@@ -5,6 +5,11 @@
 #include <QToolBar>
 #include "TimeLineWidget/customwidget.h"
 #include <QResizeEvent>
+#include <QLabel>
+#include <QTimer>
+#include "Video/QVideo.h"
+#include <QTableWidget>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,13 +31,15 @@ private slots:
     void onCustomButtonClicked();
 
 private:
-
+    void printResults(const std::vector<std::vector<std::string>>& results);
     void CreateMenu();
     void createToolBar();
 
     Ui::MainWindow *ui;
     CustomWidget *customWidget;
     QVBoxLayout *layout;
+    CVideo* c;
+    QTableWidget* resultTableWidget;
 
 
 };

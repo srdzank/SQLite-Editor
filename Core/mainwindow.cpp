@@ -3,6 +3,7 @@
 #include "logger.h"
 #include <QLineEdit>
 #include "TimeLineWidget/customwidget.h"
+#include "SQLParserAPI.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -12,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     LOG("Application started");
 
     ui->setupUi(this);
-    resize(800, 600);
+    resize(1024, 768);
     layout = new QVBoxLayout();
     setWindowTitle("Editor");
     // Set the window icon
@@ -30,20 +31,24 @@ MainWindow::MainWindow(QWidget *parent)
     customWidget =  new CustomWidget(this);
     QMenuBar *menuBar = this->menuBar();
     layout->addWidget(menuBar);
-//    customWidget->setGeometry(QRect(0, 20, width()-100, height()/5));
 
     layout->addWidget(customWidget);
     setLayout(layout);
 
+    resultTableWidget = new QTableWidget(this);
+    resultTableWidget->setGeometry(300, 50, 300, 300);
+    
     // Create the status bar
     this->statusBar()->showMessage("Ready");
     this->statusBar()->setStyleSheet("QStatusBar { background-color: #767676; color: white; }");
+    c= new CVideo(this);
 
 
 }
 
 MainWindow::~MainWindow()
 {
+    delete c;
     delete ui;
 }
 
@@ -106,10 +111,57 @@ void MainWindow::createToolBar()
     LOG("Main ToolBar is created");
 }
 
+void MainWindow::printResults(const std::vector<std::vector<std::string>>& results)
+{
+    resultTableWidget->clear();
+    resultTableWidget->setRowCount(results.size());
+
+    if (!results.empty()) {
+        resultTableWidget->setColumnCount(results[0].size());
+    }
+
+    for (size_t row = 0; row < results.size(); ++row) {
+        for (size_t col = 0; col < results[row].size(); ++col) {
+            QTableWidgetItem* item = new QTableWidgetItem(QString::fromStdString(results[row][col]));
+            resultTableWidget->setItem(row, col, item);
+        }
+    }
+}
+
 void MainWindow::onActionExit()
 {
     LOG("Application is closed");
-    close();
+    // Initialize database
+    sqlite3* db;
+    const char* filename = "C:/Users/kapis/Desktop/Project1/example.db";
+
+    if (openDatabase(filename, &db) != SQLITE_OK) {
+        std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
+        return;
+    }
+
+    // Example SQL statement
+    std::string sql = "SELECT * FROM users;";
+
+    // Parse the SQL statement
+    std::shared_ptr<ASTNode> ast = parseSQL(sql);
+    if (!ast) {
+        std::cerr << "Failed to parse SQL" << std::endl;
+        closeDatabase(db);
+        return;
+    }
+
+    // Execute the AST and get results
+    auto results = executeAST(ast, db);
+    printResults(results);
+
+
+    // Close the database
+    closeDatabase(db);
+
+    std::cout << "Database operations completed successfully." << std::endl;
+
+   // close();
 }
 
 void MainWindow::onCustomButtonClicked()
@@ -122,5 +174,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     int w = event->size().width();
     int h = event->size().height();
     customWidget->setGeometry(QRect(0,  h-300, w-100, 250));
+    c->setGeometry(QRect(20, 50, 250, 50));
+
     QMainWindow::resizeEvent(event);
 }

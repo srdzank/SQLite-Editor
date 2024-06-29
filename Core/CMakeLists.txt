@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+endif()
+
 project(Core VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
@@ -27,6 +31,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         logger.h logger.cpp
         TimeLineWidget/customwidget.h TimeLineWidget/customwidget.cpp
         TimeLineWidget/customitemdelegate.h TimeLineWidget/customitemdelegate.cpp
+        Video/QVideo.h Video/QVideo.cpp 
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Core APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -46,7 +51,9 @@ else()
     endif()
 endif()
 
-target_link_libraries(Core PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+target_include_directories(Core PRIVATE ../SQLParser/include)
+target_link_libraries(Core PRIVATE Qt${QT_VERSION_MAJOR}::Widgets SQLParserLib)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -72,3 +79,9 @@ install(TARGETS Core
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(Core)
 endif()
+
+
+# Set the runtime output directory for the DLL
+set_target_properties(Core PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
