@@ -1,55 +1,74 @@
 #include "CSQLWorkSpace.h"
-#include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QMessageBox>
+#include <QAbstractItemView>  // Include this for QAbstractItemView
 
-CSQLWorkSpace::CSQLWorkSpace(QWidget* parent)
-    : QWidget(parent)
+CSQLWorkSpace::CSQLWorkSpace(QWidget* parent) : QWidget(parent)
 {
-    // Create the QTextEdit for SQL command input
-    sqlTextEdit = new QTextEdit(this);
-    sqlTextEdit->setPlaceholderText("Write your SQL command here...");
+    layout = new QVBoxLayout(this);
 
-    // Create the buttons
+    // Create SQL input field
+    sqlInput = new AutoCompleteTextEdit(this);
+
+    // Create buttons
     executeButton = new QPushButton("Execute", this);
     clearButton = new QPushButton("Clear", this);
 
-    // Connect the buttons to their respective slots
-    connect(executeButton, &QPushButton::clicked, this, &CSQLWorkSpace::onExecuteClicked);
-    connect(clearButton, &QPushButton::clicked, this, &CSQLWorkSpace::onClearClicked);
-
-    // Create a layout to arrange the buttons horizontally
+    // Create a horizontal layout for buttons
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(executeButton);
     buttonLayout->addWidget(clearButton);
 
-    // Create the main layout to arrange the QTextEdit and the button layout vertically
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->addLayout(buttonLayout);
-    mainLayout->addWidget(sqlTextEdit);
+    // Add widgets to the main layout
+    layout->addLayout(buttonLayout);
+    layout->addWidget(sqlInput);
 
-    // Set the layout for the widget
-    setLayout(mainLayout);
+    // Set layout for the widget
+    setLayout(layout);
+
+    // Create the completer
+    completerModel = new QStringListModel(this);
+    completer = new QCompleter(completerModel, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setCompletionMode(QCompleter::PopupCompletion);
+    sqlInput->setCompleter(completer);
+
+    // Apply styles to the completer
+    applyCompleterStyles();  // Add this line
+
+    // Connect buttons to their slots
+    connect(executeButton, &QPushButton::clicked, this, &CSQLWorkSpace::onExecuteButtonClicked);
+    connect(clearButton, &QPushButton::clicked, this, &CSQLWorkSpace::onClearButtonClicked);
 }
 
-CSQLWorkSpace::~CSQLWorkSpace()
+void CSQLWorkSpace::onExecuteButtonClicked()
 {
-}
-
-void CSQLWorkSpace::onExecuteClicked()
-{
-    QString sqlCommand = sqlTextEdit->toPlainText();
-    if (sqlCommand.isEmpty()) {
-        QMessageBox::warning(this, tr("Warning"), tr("SQL command is empty!"));
+    if (sqlInput->toPlainText().trimmed().isEmpty()) {
+        QMessageBox::warning(this, tr("Empty Query"), tr("The SQL query is empty. Please enter a query to execute."));
         return;
     }
-
-    // Execute the SQL command here
-    // For demonstration, we'll just show a message box
-    QMessageBox::information(this, tr("Execute"), tr("Executing SQL command:\n%1").arg(sqlCommand));
+    emit executeSQL(sqlInput->toPlainText());
 }
 
-void CSQLWorkSpace::onClearClicked()
+void CSQLWorkSpace::onClearButtonClicked()
 {
-    sqlTextEdit->clear();
+    sqlInput->clear();
+    emit clearSQL();
+}
+
+void CSQLWorkSpace::applyCompleterStyles()
+{
+    completer->popup()->setStyleSheet(
+        "QListView {"
+        "    background-color: lightyellow;"
+        "    border: 1px solid #CCCCCC;"
+        "    color: black;"
+        "}"
+        "QListView::item {"
+        "    padding: 4px;"
+        "}"
+        "QListView::item:selected {"
+        "    background-color: darkgray;"
+        "    color: white;"
+        "}"
+    );
 }

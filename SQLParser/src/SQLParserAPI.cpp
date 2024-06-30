@@ -1,5 +1,6 @@
 #include "SQLParserAPI.h"
 #include "ConcreteVisitor.h"
+#include "SQLCompletionEngine.h"
 #include <iostream>
 #include <sqlite3.h>
 
@@ -22,31 +23,56 @@ SQLPARSERLIB_API std::shared_ptr<ASTNode> parseSQL(const std::string& sql) {
     return parser.parse();
 }
 
-SQLPARSERLIB_API std::vector<std::vector<std::string>> executeAST(std::shared_ptr<ASTNode> ast, sqlite3* db) {
+SQLPARSERLIB_API void* executeAST(std::shared_ptr<ASTNode> ast, sqlite3* db) {
     ConcreteVisitor visitor(db);
     ast->accept(visitor);
-    return visitor.getResults();
+    auto results = new SQLResult();
+    results->data = visitor.getResults();
+    return results;
 }
 
-SQLPARSERLIB_API std::vector<std::vector<std::string>> executeQuery(sqlite3* db, const std::string& sql) {
-    sqlite3_stmt* stmt;
-    std::vector<std::vector<std::string>> result;
+SQLPARSERLIB_API void freeResults(void* results) {
+    delete static_cast<SQLResult*>(results);
+}
 
-    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
-        return result;
+SQLPARSERLIB_API const char* getResultValue(void* results, size_t row, size_t column) {
+    SQLResult* res = static_cast<SQLResult*>(results);
+    if (row >= res->data.size() || column >= res->data[row].size()) {
+        return nullptr;
     }
+    return res->data[row][column].c_str();
+}
 
-    int cols = sqlite3_column_count(stmt);
-    while (sqlite3_step(stmt) == SQLITE_ROW) {
-        std::vector<std::string> row;
-        for (int col = 0; col < cols; col++) {
-            const char* text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, col));
-            row.push_back(text ? text : "NULL");
-        }
-        result.push_back(row);
+SQLPARSERLIB_API size_t getResultRowCount(void* results) {
+    SQLResult* res = static_cast<SQLResult*>(results);
+    return res->data.size();
+}
+
+SQLPARSERLIB_API size_t getResultColumnCount(void* results) {
+    SQLResult* res = static_cast<SQLResult*>(results);
+    return res->data.empty() ? 0 : res->data[0].size();
+}
+
+SQLPARSERLIB_API void* getSuggestions(const char* sql, size_t cursorPosition, sqlite3* db) {
+    SQLCompletionEngine completionEngine(db);
+    auto suggestions = new SQLSuggestions();
+    suggestions->data = completionEngine.getSuggestions(sql, cursorPosition);
+    return suggestions;
+}
+
+SQLPARSERLIB_API void freeSuggestions(void* suggestions) {
+    delete static_cast<SQLSuggestions*>(suggestions);
+}
+
+SQLPARSERLIB_API const char* getSuggestionValue(void* suggestions, size_t index) {
+    SQLSuggestions* sug = static_cast<SQLSuggestions*>(suggestions);
+    if (index >= sug->data.size()) {
+        return nullptr;
     }
+    return sug->data[index].c_str();
+}
 
-    sqlite3_finalize(stmt);
-    return result;
+SQLPARSERLIB_API size_t getSuggestionsCount(void* suggestions) {
+    SQLSuggestions* sug = static_cast<SQLSuggestions*>(suggestions);
+    return sug->data.size();
 }

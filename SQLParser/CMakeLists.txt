@@ -21,6 +21,7 @@ add_library(SQLParserLib SHARED
     src/Parser.cpp
     src/Visitor.cpp
     src/SQLParserAPI.cpp
+    src/SQLCompletionEngine.cpp
 )
 
 # Set compile definitions

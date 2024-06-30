@@ -3,14 +3,22 @@
 #include "logger.h"
 #include <QLineEdit>
 #include <QFileDialog>
-#include "SQLParserAPI.h"
+#include <QMenuBar>
+#include <QToolBar>
+#include <QMessageBox>
+#include <QStringListModel>
+#include <QCompleter>
+#include <QHBoxLayout>
+#include <iostream>
+#include "SQLParserAPI.h"  // Include your SQL parser API implementation
+#include "SQLWorkSpace/CSQLWorkSpace.h"  // Include the custom CSQLWorkSpace header
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     LOG("Application started");
-
+    m_db = nullptr;
     ui->setupUi(this);
     resize(1024, 768);
     setWindowTitle("Editor");
@@ -33,32 +41,48 @@ MainWindow::MainWindow(QWidget* parent)
     // Set up layout for central widget
     layout = new QVBoxLayout(centralWidget);
 
-    customWidget = new CSQLWorkSpace(this);
-    layout->addWidget(customWidget);
+    splitter = new QSplitter(Qt::Vertical, this);
+    customWidget = new CSQLWorkSpace(this);  // Use the custom CSQLWorkSpace
+    tableViewWidget = new CTableViewWorkspace(this);
 
-    resultTableWidget = new QTableWidget(this);
-    resultTableWidget->setGeometry(300, 50, 300, 300);
-    layout->addWidget(resultTableWidget);
+    splitter->addWidget(customWidget);  // Add the CSQLWorkSpace to the splitter
+    splitter->addWidget(tableViewWidget);
+
+    layout->addWidget(splitter);
 
     // Create a CDBNavigator instance
     navigator = new CDBNavigator(this);
-
+    connect(navigator, SIGNAL(sigClickedTableItem(const QString&)), this, SLOT(procClickedTableItem(const QString&)));
 
     // Create a dock widget
     QDockWidget* dock = new QDockWidget(tr("Database Navigator"), this);
     dock->setWidget(navigator);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
 
+    // Connect signals from customWidget to MainWindow slots
+    connect(customWidget, SIGNAL(executeSQL(const QString&)), this, SLOT(onExecuteSQL(const QString&)));
+    connect(customWidget, SIGNAL(clearSQL()), this, SLOT(onClearSQL()));
+
+    // Create the completer
+    completerModel = new QStringListModel(this);
+    completer = new QCompleter(completerModel, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setCompletionMode(QCompleter::PopupCompletion);
+    customWidget->sqlInput->setCompleter(completer);
+
+    connect(customWidget->sqlInput, &QTextEdit::textChanged, this, &MainWindow::onSQLTextChanged);  // Connect text changed signal
+
+    updateCompleterModel();
+
     // Create the status bar
     this->statusBar()->showMessage("Ready");
     this->statusBar()->setStyleSheet("QStatusBar { background-color: #767676; color: white; }");
-
-    //c = new CVideo(this);
 }
 
 MainWindow::~MainWindow()
 {
-    //delete c;
+    // Close the database
+    closeDatabase(m_db);
     delete ui;
 }
 
@@ -75,6 +99,7 @@ void MainWindow::CreateMenu()
 
     // Create a file menu
     QMenu* fileMenu = menuBar->addMenu("File");
+    fileMenu->setObjectName("File");
 
     // Create actions for the file menu
     QAction* openAction = new QAction("Open", this);
@@ -122,21 +147,60 @@ void MainWindow::createToolBar()
     LOG("Main ToolBar is created");
 }
 
-void MainWindow::printResults(const std::vector<std::vector<std::string>>& results)
+void MainWindow::updateLastOpenedFileName(const QString& fileName)
 {
-    resultTableWidget->clear();
-    resultTableWidget->setRowCount(results.size());
+    lastOpenedFileName = fileName;
+    QMenuBar* menuBar = this->menuBar();
+    QMenu* fileMenu = menuBar->findChild<QMenu*>("File");
 
-    if (!results.empty()) {
-        resultTableWidget->setColumnCount(results[0].size());
-    }
+    if (fileMenu) {
+        // Check if there is already an action for the last opened file
+        QAction* lastOpenedFileAction = fileMenu->findChild<QAction*>("lastOpenedFileAction");
 
-    for (size_t row = 0; row < results.size(); ++row) {
-        for (size_t col = 0; col < results[row].size(); ++col) {
-            QTableWidgetItem* item = new QTableWidgetItem(QString::fromStdString(results[row][col]));
-            resultTableWidget->setItem(row, col, item);
+        if (lastOpenedFileAction) {
+            // Update the existing action
+            lastOpenedFileAction->setText("Last Opened: " + lastOpenedFileName);
+        }
+        else {
+            // Create a new action for the last opened file
+            lastOpenedFileAction = new QAction("Last Opened: " + lastOpenedFileName, this);
+            lastOpenedFileAction->setObjectName("lastOpenedFileAction");
+            fileMenu->addAction(lastOpenedFileAction);
         }
     }
+}
+
+void MainWindow::updateCompleterModel()
+{
+    QString sqlText = customWidget->sqlInput->toPlainText();
+    size_t cursorPosition = customWidget->sqlInput->textCursor().position();
+
+    // Use c_str() to convert std::string to const char*
+    void* suggestionsHandle = getSuggestions(sqlText.toStdString().c_str(), cursorPosition, m_db);
+    if (!suggestionsHandle) {
+        return;
+    }
+
+    SQLSuggestions* suggestions = static_cast<SQLSuggestions*>(suggestionsHandle);
+    QStringList suggestionList;
+    for (const auto& suggestion : suggestions->data) {
+        suggestionList << QString::fromStdString(suggestion);
+    }
+    completerModel->setStringList(suggestionList);
+
+    // Free the suggestions handle
+    freeSuggestions(suggestionsHandle);
+}
+
+void MainWindow::onSQLTextChanged()
+{
+    updateCompleterModel();
+}
+
+void MainWindow::printResults(const std::vector<std::vector<std::string>>& results,
+    const std::vector<std::string>& columnNames)
+{
+    tableViewWidget->printResults(results, columnNames);
 }
 
 void MainWindow::onActionExit()
@@ -148,45 +212,109 @@ void MainWindow::onActionExit()
 void MainWindow::onActionOpen()
 {
     LOG("File is open");
+    if (m_db) {
+        closeDatabase(m_db);
+    }
 
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open SQLite Database"),
         "",
         tr("SQLite Database Files (*.sqlite *.db)"));
     if (!fileName.isEmpty()) {
-        navigator->openDatabase(fileName);
-
-        // Attempt to open the database
-        // Initialize database
-        sqlite3* db;
         QByteArray byteArray = fileName.toUtf8();
         const char* filename = byteArray.constData();
 
-        if (openDatabase(filename, &db) != SQLITE_OK) {
-            std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
+        if (openDatabase(filename, &m_db) != SQLITE_OK) {
+            std::cerr << "Can't open database: " << sqlite3_errmsg(m_db) << std::endl;
             return;
         }
+        navigator->openDatabase(m_db);
+        QString sql = "SELECT * FROM users;";
 
-        // Example SQL statement
-        std::string sql = "SELECT * FROM users;";
-
-        // Parse the SQL statement
-        std::shared_ptr<ASTNode> ast = parseSQL(sql);
-        if (!ast) {
-            std::cerr << "Failed to parse SQL" << std::endl;
-            closeDatabase(db);
-            return;
-        }
-
-        // Execute the AST and get results
-        auto results = executeAST(ast, db);
-        printResults(results);
-
-        // Close the database
-        closeDatabase(db);
-
-        std::cout << "Database operations completed successfully." << std::endl;
+        updateLastOpenedFileName(fileName); // Add this line to update the menu
     }
+}
+
+//void MainWindow::executeSQLCommand(sqlite3* db, const QString& eSql, const QString& table) {
+//    QByteArray byteArray = eSql.toUtf8();
+//    const char* sql = byteArray.constData();
+//
+//    // Parse the SQL statement
+//    std::shared_ptr<ASTNode> ast = parseSQL(sql);
+//    if (!ast) {
+//        std::cerr << "Failed to parse SQL" << std::endl;
+//        closeDatabase(db);
+//        return;
+//    }
+//
+//    // Execute the AST and get results
+//    void* resultHandle = executeAST(ast, db);
+//    if (!resultHandle) {
+//        std::cerr << "Failed to execute AST" << std::endl;
+//        closeDatabase(db);
+//        return;
+//    }
+//
+//    // Retrieve the results
+//    SQLResult* results = static_cast<SQLResult*>(resultHandle);
+//    const std::vector<std::vector<std::string>>& resultData = results->data;
+//    std::vector<std::string> columnNames = navigator->columnNames(table.toStdString());
+//
+//    // Print the results
+//    printResults(resultData, columnNames);
+//
+//    // Free the result handle
+//    freeResults(resultHandle);
+//}
+
+void MainWindow::executeSQLCommand(sqlite3* db, const QString& eSql) {
+    QByteArray byteArray = eSql.toUtf8();
+    const char* sql = byteArray.constData();
+
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
+        return;
+    }
+
+    int cols = sqlite3_column_count(stmt);
+    std::vector<std::string> columnNames;
+    for (int i = 0; i < cols; i++) {
+        columnNames.push_back(sqlite3_column_name(stmt, i));
+    }
+
+    std::vector<std::vector<std::string>> resultData;
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        std::vector<std::string> row;
+        for (int col = 0; col < cols; col++) {
+            const char* text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, col));
+            row.push_back(text ? text : "NULL");
+        }
+        resultData.push_back(row);
+    }
+
+    sqlite3_finalize(stmt);
+
+    // Print the results
+    printResults(resultData, columnNames);
+}
+
+
+void MainWindow::procClickedTableItem(const QString& table) {
+    QString sql = "SELECT * FROM " + table + " LIMIT 10;";
+    executeSQLCommand(m_db, sql);
+
+    std::cout << "Database operations completed successfully." << std::endl;
+}
+
+void MainWindow::onExecuteSQL(const QString& query)
+{
+    executeSQLCommand(m_db, query);  // Assuming table name is "results"
+}
+
+void MainWindow::onClearSQL()
+{
+    customWidget->sqlInput->clear();
 }
 
 void MainWindow::onCustomButtonClicked()
@@ -196,8 +324,8 @@ void MainWindow::onCustomButtonClicked()
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-    int w = event->size().width();
-    int h = event->size().height();
+    //int w = event->size().width();
+    //int h = event->size().height();
     //customWidget->setGeometry(QRect(0, h - 300, w - 100, 250));
     //c->setGeometry(QRect(0, 50, 250, 50));
 
