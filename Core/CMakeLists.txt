@@ -32,6 +32,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         TimeLineWidget/customwidget.h TimeLineWidget/customwidget.cpp
         TimeLineWidget/customitemdelegate.h TimeLineWidget/customitemdelegate.cpp
         Video/QVideo.h Video/QVideo.cpp 
+        DBNavigator/CDBNavigator.h DBNavigator/CDBNavigator.cpp
+        SQLWorkSpace/CSQLWorkSpace.h SQLWorkSpace/CSQLWorkSpace.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Core APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

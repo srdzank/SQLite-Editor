@@ -9,6 +9,9 @@
 #include <QTimer>
 #include "Video/QVideo.h"
 #include <QTableWidget>
+#include "DBNavigator/CDBNavigator.h"
+#include <QDockWidget>
+#include "SQLWorkSpace/CSQLWorkSpace.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -28,6 +31,7 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 private slots:
     void onActionExit();
+    void onActionOpen();
     void onCustomButtonClicked();
 
 private:
@@ -36,10 +40,11 @@ private:
     void createToolBar();
 
     Ui::MainWindow *ui;
-    CustomWidget *customWidget;
+    CSQLWorkSpace* customWidget;
     QVBoxLayout *layout;
     CVideo* c;
     QTableWidget* resultTableWidget;
+    CDBNavigator *navigator;
 
 
 };

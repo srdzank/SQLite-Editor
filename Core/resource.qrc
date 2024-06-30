@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>logo.png</file>
+        <file>column.png</file>
+        <file>table.png</file>
     </qresource>
 </RCC>

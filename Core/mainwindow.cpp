@@ -2,11 +2,10 @@
 #include "ui_mainwindow.h"
 #include "logger.h"
 #include <QLineEdit>
-#include "TimeLineWidget/customwidget.h"
+#include <QFileDialog>
 #include "SQLParserAPI.h"
 
-
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -14,8 +13,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
     resize(1024, 768);
-    layout = new QVBoxLayout();
     setWindowTitle("Editor");
+
     // Set the window icon
     QIcon appIcon(":/logo.png");
     setWindowIcon(appIcon);
@@ -23,52 +22,64 @@ MainWindow::MainWindow(QWidget *parent)
     // Set a background color using stylesheets
     setStyleSheet("QMainWindow { background-color: #767676; }");
 
-
+    // Set a central widget
+    QWidget* centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
 
     // Create the menu
     CreateMenu();
     createToolBar();
-    customWidget =  new CustomWidget(this);
-    QMenuBar *menuBar = this->menuBar();
-    layout->addWidget(menuBar);
 
+    // Set up layout for central widget
+    layout = new QVBoxLayout(centralWidget);
+
+    customWidget = new CSQLWorkSpace(this);
     layout->addWidget(customWidget);
-    setLayout(layout);
 
     resultTableWidget = new QTableWidget(this);
     resultTableWidget->setGeometry(300, 50, 300, 300);
-    
+    layout->addWidget(resultTableWidget);
+
+    // Create a CDBNavigator instance
+    navigator = new CDBNavigator(this);
+
+
+    // Create a dock widget
+    QDockWidget* dock = new QDockWidget(tr("Database Navigator"), this);
+    dock->setWidget(navigator);
+    addDockWidget(Qt::LeftDockWidgetArea, dock);
+
     // Create the status bar
     this->statusBar()->showMessage("Ready");
     this->statusBar()->setStyleSheet("QStatusBar { background-color: #767676; color: white; }");
-    c= new CVideo(this);
 
-
+    //c = new CVideo(this);
 }
 
 MainWindow::~MainWindow()
 {
-    delete c;
+    //delete c;
     delete ui;
 }
 
 void MainWindow::CreateMenu()
 {
     // Create the menu bar
-    QMenuBar *menuBar = this->menuBar();
+    QMenuBar* menuBar = this->menuBar();
     menuBar->setStyleSheet(
         "QMenuBar { background-color: #969696; color: white; }"
         "QMenuBar::item:selected { background-color: red; }"
         "QMenu { background-color: #969696; color: white; }"
         "QMenu::item:selected { background-color: red; }"
-        );
+    );
 
     // Create a file menu
-    QMenu *fileMenu = menuBar->addMenu("File");
+    QMenu* fileMenu = menuBar->addMenu("File");
+
     // Create actions for the file menu
-    QAction *openAction = new QAction("Open", this);
-    QAction *saveAction = new QAction("Save", this);
-    QAction *exitAction = new QAction("Exit", this);
+    QAction* openAction = new QAction("Open", this);
+    QAction* saveAction = new QAction("Save", this);
+    QAction* exitAction = new QAction("Exit", this);
 
     // Add actions to the file menu
     fileMenu->addAction(openAction);
@@ -76,19 +87,19 @@ void MainWindow::CreateMenu()
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
-    // Connect the exit action to the close slot of the main window
     connect(exitAction, &QAction::triggered, this, &MainWindow::onActionExit);
+    connect(openAction, &QAction::triggered, this, &MainWindow::onActionOpen);
+
     LOG("Main Menu is created");
 }
-
 
 void MainWindow::createToolBar()
 {
     // Create a toolbar
-    QToolBar *toolBar = addToolBar("Main Toolbar");
+    QToolBar* toolBar = addToolBar("Main Toolbar");
 
     // Create an action for the toolbar
-    QAction *customAction = new QAction(QIcon(":/logo.png"), "Custom Button", this);
+    QAction* customAction = new QAction(QIcon(":/logo.png"), "Custom Button", this);
     connect(customAction, &QAction::triggered, this, &MainWindow::onCustomButtonClicked);
 
     // Add the action to the toolbar
@@ -102,7 +113,7 @@ void MainWindow::createToolBar()
     toolBar->addWidget(lineEdit);
 
     // Create an action for the toolbar
-    QAction *customAction2 = new QAction(QIcon(":/logo.png"), "Custom Button", this);
+    QAction* customAction2 = new QAction(QIcon(":/logo.png"), "Custom Button", this);
     connect(customAction2, &QAction::triggered, this, &MainWindow::onCustomButtonClicked);
     // Add the action to the toolbar
     toolBar->addAction(customAction2);
@@ -131,37 +142,51 @@ void MainWindow::printResults(const std::vector<std::vector<std::string>>& resul
 void MainWindow::onActionExit()
 {
     LOG("Application is closed");
-    // Initialize database
-    sqlite3* db;
-    const char* filename = "C:/Users/kapis/Desktop/Project1/example.db";
+    close();
+}
 
-    if (openDatabase(filename, &db) != SQLITE_OK) {
-        std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
-        return;
-    }
+void MainWindow::onActionOpen()
+{
+    LOG("File is open");
 
-    // Example SQL statement
-    std::string sql = "SELECT * FROM users;";
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Open SQLite Database"),
+        "",
+        tr("SQLite Database Files (*.sqlite *.db)"));
+    if (!fileName.isEmpty()) {
+        navigator->openDatabase(fileName);
 
-    // Parse the SQL statement
-    std::shared_ptr<ASTNode> ast = parseSQL(sql);
-    if (!ast) {
-        std::cerr << "Failed to parse SQL" << std::endl;
+        // Attempt to open the database
+        // Initialize database
+        sqlite3* db;
+        QByteArray byteArray = fileName.toUtf8();
+        const char* filename = byteArray.constData();
+
+        if (openDatabase(filename, &db) != SQLITE_OK) {
+            std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
+            return;
+        }
+
+        // Example SQL statement
+        std::string sql = "SELECT * FROM users;";
+
+        // Parse the SQL statement
+        std::shared_ptr<ASTNode> ast = parseSQL(sql);
+        if (!ast) {
+            std::cerr << "Failed to parse SQL" << std::endl;
+            closeDatabase(db);
+            return;
+        }
+
+        // Execute the AST and get results
+        auto results = executeAST(ast, db);
+        printResults(results);
+
+        // Close the database
         closeDatabase(db);
-        return;
+
+        std::cout << "Database operations completed successfully." << std::endl;
     }
-
-    // Execute the AST and get results
-    auto results = executeAST(ast, db);
-    printResults(results);
-
-
-    // Close the database
-    closeDatabase(db);
-
-    std::cout << "Database operations completed successfully." << std::endl;
-
-   // close();
 }
 
 void MainWindow::onCustomButtonClicked()
@@ -169,12 +194,12 @@ void MainWindow::onCustomButtonClicked()
     LOG("onCustomButtonClicked is clicked");
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
+void MainWindow::resizeEvent(QResizeEvent* event)
 {
     int w = event->size().width();
     int h = event->size().height();
-    customWidget->setGeometry(QRect(0,  h-300, w-100, 250));
-    c->setGeometry(QRect(20, 50, 250, 50));
+    //customWidget->setGeometry(QRect(0, h - 300, w - 100, 250));
+    //c->setGeometry(QRect(0, 50, 250, 50));
 
     QMainWindow::resizeEvent(event);
 }
