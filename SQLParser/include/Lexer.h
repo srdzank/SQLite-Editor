@@ -58,7 +58,12 @@ enum TokenType {
     TOKEN_AS,
     TOKEN_DISTINCT,
     TOKEN_IS,
-    TOKEN_BETWEEN
+    TOKEN_BETWEEN,
+    TOKEN_VALUES,       // Add this line
+    TOKEN_OPEN_PAREN,   // Add this line
+    TOKEN_CLOSE_PAREN,  // Add this line
+    TOKEN_INTO,         // Add this line
+    TOKEN_SET           // Add this line
 };
 
 struct Token {
