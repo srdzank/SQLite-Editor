@@ -36,6 +36,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         SQLWorkSpace/CSQLWorkSpace.h SQLWorkSpace/CSQLWorkSpace.cpp
         TableViewWorkspace/CTableViewWorkspace.h TableViewWorkspace/CTableViewWorkspace.cpp
         AutoComplete/AutoCompleteTextEdit.h AutoComplete/AutoCompleteTextEdit.cpp
+        AutoComplete/SQLHighlighter.h AutoComplete/SQLHighlighter.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Core APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

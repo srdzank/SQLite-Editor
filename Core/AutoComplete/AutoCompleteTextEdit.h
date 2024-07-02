@@ -3,6 +3,7 @@
 
 #include <QTextEdit>
 #include <QCompleter>
+#include "SQLHighlighter.h"
 
 class AutoCompleteTextEdit : public QTextEdit
 {
@@ -25,6 +26,7 @@ private:
 
 private:
     QCompleter* c;
+    SQLHighlighter* highlighter;
 };
 
 #endif // AUTOCOMPLETETEXTEDIT_H

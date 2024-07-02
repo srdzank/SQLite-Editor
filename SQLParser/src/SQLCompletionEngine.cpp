@@ -8,7 +8,8 @@ SQLCompletionEngine::SQLCompletionEngine(sqlite3* db) : db(db) {
         "TABLE", "INDEX", "VIEW", "TRIGGER", "IF", "EXISTS", "NOT", "NULL", "DEFAULT",
         "PRIMARY", "KEY", "FOREIGN", "REFERENCES", "CHECK", "UNIQUE", "AND", "OR", "IN",
         "LIKE", "LIMIT", "ORDER", "BY", "GROUP", "HAVING", "JOIN", "INNER", "LEFT", "RIGHT",
-        "FULL", "OUTER", "ON", "AS", "DISTINCT", "IS", "BETWEEN"
+        "FULL", "OUTER", "ON", "AS", "DISTINCT", "IS", "BETWEEN", "VALUES" , "OPEN_PAREN",
+        "CLOSE_PAREN", "INTO", "SET"
     };
 }
 

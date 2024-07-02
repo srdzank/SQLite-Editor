@@ -5,7 +5,6 @@
 CSQLWorkSpace::CSQLWorkSpace(QWidget* parent) : QWidget(parent)
 {
     layout = new QVBoxLayout(this);
-
     // Create SQL input field
     sqlInput = new AutoCompleteTextEdit(this);
 

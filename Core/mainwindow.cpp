@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget* parent)
     m_db = nullptr;
     ui->setupUi(this);
     resize(1024, 768);
-    setWindowTitle("Editor");
+    setWindowTitle("SQLite Editor");
 
     // Set the window icon
     QIcon appIcon(":/logo.png");
@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget* parent)
     updateCompleterModel();
 
     // Create the status bar
-    this->statusBar()->showMessage("Ready");
+    this->statusBar()->showMessage("Copyright (c) by Srdzan Kostenarov");
     this->statusBar()->setStyleSheet("QStatusBar { background-color: #767676; color: white; }");
 }
 
@@ -102,13 +102,13 @@ void MainWindow::CreateMenu()
     fileMenu->setObjectName("File");
 
     // Create actions for the file menu
-    QAction* openAction = new QAction("Open", this);
-    QAction* saveAction = new QAction("Save", this);
+    QAction* openAction = new QAction("Open Database", this);
+//    QAction* saveAction = new QAction("Save", this);
     QAction* exitAction = new QAction("Exit", this);
 
     // Add actions to the file menu
     fileMenu->addAction(openAction);
-    fileMenu->addAction(saveAction);
+//    fileMenu->addAction(saveAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
@@ -131,17 +131,17 @@ void MainWindow::createToolBar()
     toolBar->addAction(customAction);
 
     // Create a QLineEdit and add it to the toolbar
-    QLineEdit* lineEdit = new QLineEdit(this);
-    lineEdit->setFixedWidth(200);
-    lineEdit->setPlaceholderText("Enter text...");
+    //QLineEdit* lineEdit = new QLineEdit(this);
+    //lineEdit->setFixedWidth(200);
+    //lineEdit->setPlaceholderText("Enter text...");
     //connect(lineEdit, &QLineEdit::textChanged, this, &MainWindow::onTextChanged);
-    toolBar->addWidget(lineEdit);
+//    toolBar->addWidget(lineEdit);
 
     // Create an action for the toolbar
-    QAction* customAction2 = new QAction(QIcon(":/logo.png"), "Custom Button", this);
+    QAction* customAction2 = new QAction(QIcon(":/pic1.png"), "Custom Button", this);
     connect(customAction2, &QAction::triggered, this, &MainWindow::onCustomButtonClicked);
     // Add the action to the toolbar
-    toolBar->addAction(customAction2);
+//    toolBar->addAction(customAction2);
     addToolBar(Qt::BottomToolBarArea, toolBar);
 
     LOG("Main ToolBar is created");

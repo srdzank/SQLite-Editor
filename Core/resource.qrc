@@ -3,5 +3,6 @@
         <file>logo.png</file>
         <file>column.png</file>
         <file>table.png</file>
+        <file>pic1.png</file>
     </qresource>
 </RCC>

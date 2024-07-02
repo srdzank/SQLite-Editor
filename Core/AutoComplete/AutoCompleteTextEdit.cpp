@@ -6,6 +6,8 @@
 AutoCompleteTextEdit::AutoCompleteTextEdit(QWidget* parent)
     : QTextEdit(parent), c(nullptr)
 {
+    setPlaceholderText("Write your SQL command here...");
+    highlighter = new SQLHighlighter(document());
 }
 
 void AutoCompleteTextEdit::setCompleter(QCompleter* completer)
