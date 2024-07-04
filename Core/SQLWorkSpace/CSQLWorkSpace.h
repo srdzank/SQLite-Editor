@@ -8,6 +8,8 @@
 #include <QCompleter>
 #include "../AutoComplete/AutoCompleteTextEdit.h"
 #include <QMessageBox>
+#include <QLabel>
+
 
 class CSQLWorkSpace : public QWidget
 {
@@ -21,7 +23,7 @@ public:
     QPushButton* clearButton;
     QCompleter* completer;
     QStringListModel* completerModel;
-
+    QLabel* errorLabel;
 signals:
     void executeSQL(const QString& query);
     void clearSQL();
@@ -33,6 +35,7 @@ private slots:
 private:
     QVBoxLayout* layout;
     void applyCompleterStyles();
+
 };
 
 #endif // CSQLWORKSPACE_H

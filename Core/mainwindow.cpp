@@ -226,6 +226,7 @@ void MainWindow::onActionOpen()
 
         if (openDatabase(filename, &m_db) != SQLITE_OK) {
             std::cerr << "Can't open database: " << sqlite3_errmsg(m_db) << std::endl;
+
             return;
         }
         navigator->openDatabase(m_db);
@@ -235,45 +236,18 @@ void MainWindow::onActionOpen()
     }
 }
 
-//void MainWindow::executeSQLCommand(sqlite3* db, const QString& eSql, const QString& table) {
-//    QByteArray byteArray = eSql.toUtf8();
-//    const char* sql = byteArray.constData();
-//
-//    // Parse the SQL statement
-//    std::shared_ptr<ASTNode> ast = parseSQL(sql);
-//    if (!ast) {
-//        std::cerr << "Failed to parse SQL" << std::endl;
-//        closeDatabase(db);
-//        return;
-//    }
-//
-//    // Execute the AST and get results
-//    void* resultHandle = executeAST(ast, db);
-//    if (!resultHandle) {
-//        std::cerr << "Failed to execute AST" << std::endl;
-//        closeDatabase(db);
-//        return;
-//    }
-//
-//    // Retrieve the results
-//    SQLResult* results = static_cast<SQLResult*>(resultHandle);
-//    const std::vector<std::vector<std::string>>& resultData = results->data;
-//    std::vector<std::string> columnNames = navigator->columnNames(table.toStdString());
-//
-//    // Print the results
-//    printResults(resultData, columnNames);
-//
-//    // Free the result handle
-//    freeResults(resultHandle);
-//}
 
 void MainWindow::executeSQLCommand(sqlite3* db, const QString& eSql) {
+    customWidget->errorLabel->hide();
+    customWidget->errorLabel->setText("");
     QByteArray byteArray = eSql.toUtf8();
     const char* sql = byteArray.constData();
 
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
+        customWidget->errorLabel->show();
+        customWidget->errorLabel->setText("Error: " + (QString)sqlite3_errmsg(db));
         return;
     }
 

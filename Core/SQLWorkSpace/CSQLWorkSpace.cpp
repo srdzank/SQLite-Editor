@@ -21,6 +21,11 @@ CSQLWorkSpace::CSQLWorkSpace(QWidget* parent) : QWidget(parent)
     layout->addLayout(buttonLayout);
     layout->addWidget(sqlInput);
 
+    errorLabel = new QLabel(this);  // Initialize the error label
+    errorLabel->setStyleSheet("QLabel { color: red; background-color: white; }");  // Set text color and background color
+    layout->addWidget(errorLabel);  // Add the error label to the layout
+
+
     // Set layout for the widget
     setLayout(layout);
 
@@ -37,6 +42,7 @@ CSQLWorkSpace::CSQLWorkSpace(QWidget* parent) : QWidget(parent)
     // Connect buttons to their slots
     connect(executeButton, &QPushButton::clicked, this, &CSQLWorkSpace::onExecuteButtonClicked);
     connect(clearButton, &QPushButton::clicked, this, &CSQLWorkSpace::onClearButtonClicked);
+    errorLabel->hide();
 }
 
 void CSQLWorkSpace::onExecuteButtonClicked()

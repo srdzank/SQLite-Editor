@@ -13,6 +13,8 @@
 #include "dbnavigator/cdbnavigator.h"
 #include "SQLParserAPI.h"  // Include your SQL parser API header
 #include "SQLWorkSpace/CSQLWorkSpace.h"  // Include the custom CSQLWorkSpace header
+#include <QLabel>
+
 
 namespace Ui {
     class MainWindow;
@@ -43,6 +45,8 @@ private:
     void updateLastOpenedFileName(const QString& fileName);
     void updateCompleterModel();
     void parseSQLAndSuggest();  // New method to parse SQL and suggest words
+private:
+    QLabel* errorLabel;
 
 private slots:
     void onActionExit();

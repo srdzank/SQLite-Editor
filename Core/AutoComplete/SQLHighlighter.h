@@ -25,23 +25,23 @@ public:
             << "\\bAND\\b" << "\\bOR\\b" << "\\bIN\\b" << "\\bLIKE\\b" << "\\bLIMIT\\b"
             << "\\bORDER\\b" << "\\bBY\\b" << "\\bGROUP\\b" << "\\bHAVING\\b" << "\\bJOIN\\b"
             << "\\bINNER\\b" << "\\bLEFT\\b" << "\\bRIGHT\\b" << "\\bFULL\\b" << "\\bOUTER\\b"
-            << "\\bVALUES\\b" << "\\bOPEN_PAREN\\b" << "\\bCLOSE_PAREN\\b" << "\\bINTO\\b" << "\\bSET\\b"
-            << "\\bON\\b" << "\\bAS\\b" << "\\bDISTINCT\\b" << "\\bIS\\b" << "\\bBETWEEN\\b";
-    } 
+            << "\\bON\\b" << "\\bAS\\b" << "\\bDISTINCT\\b" << "\\bIS\\b" << "\\bBETWEEN\\b"
+            << "\\bVALUES\\b" << "\\bINTO\\b" << "\\bSET\\b";
+    }
 
 protected:
     void highlightBlock(const QString& text) override {
         foreach(const QString & pattern, keywordPatterns) {
             QRegularExpression regex(pattern, QRegularExpression::CaseInsensitiveOption);
-            auto it = regex.globalMatch(text);
+            QRegularExpressionMatchIterator it = regex.globalMatch(text);
             while (it.hasNext()) {
-                auto match = it.next();
+                QRegularExpressionMatch match = it.next();
                 setFormat(match.capturedStart(), match.capturedLength(), keywordFormat);
 
                 // Convert SQL keywords to uppercase
                 QTextCursor cursor(document());
-                cursor.setPosition(match.capturedStart());
-                cursor.setPosition(match.capturedStart() + match.capturedLength(), QTextCursor::KeepAnchor);
+                cursor.setPosition(currentBlock().position() + match.capturedStart());
+                cursor.setPosition(currentBlock().position() + match.capturedStart() + match.capturedLength(), QTextCursor::KeepAnchor);
                 cursor.insertText(match.captured().toUpper());
             }
         }
