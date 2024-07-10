@@ -1,3 +1,6 @@
+![GitHub all releases](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/total)
+![GitHub latest release](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/latest/total)
+
 # SQLite Editor
 
 ## Introduction
@@ -64,10 +67,6 @@ We welcome contributions! Please follow these steps:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-![GitHub all releases](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/total)
-![GitHub latest release](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/latest/total)
-
 
 ## Acknowledgements
 
