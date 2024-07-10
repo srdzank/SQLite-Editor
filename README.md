@@ -35,18 +35,6 @@ Watch a video demonstration of SQLite Editor on [YouTube](https://www.youtube.co
     cd SQLite-Editor
     ```
 
-3. Install dependencies:
-    ```sh
-    # If using Node.js
-    npm install
-    ```
-
-4. Run the application:
-    ```sh
-    # If using Node.js
-    npm start
-    ```
-
 ## Usage
 
 1. Open the application.
@@ -83,4 +71,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For any inquiries or feedback, please contact us at [your-email@example.com](mailto:your-email@example.com).
+For any inquiries or feedback, please contact us at [srdzan.kostenarov@gmail.com](mailto:srdzan.kostenarov@gmail.com).
