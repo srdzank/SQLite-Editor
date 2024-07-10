@@ -27,26 +27,13 @@ Watch a video demonstration of SQLite Editor on [YouTube](https://www.youtube.co
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/sqlite-editor.git
+    git clone https://github.com/srdzank/SQLite-Editor.git
     ```
 
 2. Navigate to the project directory:
     ```sh
     cd sqlite-editor
     ```
-
-3. Install dependencies:
-    ```sh
-    # If using Node.js
-    npm install
-    ```
-
-4. Run the application:
-    ```sh
-    # If using Node.js
-    npm start
-    ```
-
 ## Usage
 
 1. Open the application.
