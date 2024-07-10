@@ -21,7 +21,7 @@ SQLite Editor is a powerful and efficient tool designed to manage and edit SQLit
 
 Watch a video demonstration of SQLite Editor on [YouTube](https://www.youtube.com/watch?v=V9hBwAUSgh0).
 
-[![Watch the video](https://img.youtube.com/vi/your-video-id/0.jpg)](https://www.youtube.com/watch?v=V9hBwAUSgh0)
+[![Watch the video](https://img.youtube.com/vi/V9hBwAUSgh0/0.jpg)](https://www.youtube.com/watch?v=V9hBwAUSgh0)
 
 ## Installation
 
