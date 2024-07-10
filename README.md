@@ -15,7 +15,7 @@ SQLite Editor is a powerful and efficient tool designed to manage and edit SQLit
 
 ## Screenshot
 
-![App Screenshot](path/to/screenshot.png)
+![App Screenshot](screenshot1.png)
 
 ## Video Demonstration
 
