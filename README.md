@@ -32,8 +32,21 @@ Watch a video demonstration of SQLite Editor on [YouTube](https://www.youtube.co
 
 2. Navigate to the project directory:
     ```sh
-    cd sqlite-editor
+    cd SQLite-Editor
     ```
+
+3. Install dependencies:
+    ```sh
+    # If using Node.js
+    npm install
+    ```
+
+4. Run the application:
+    ```sh
+    # If using Node.js
+    npm start
+    ```
+
 ## Usage
 
 1. Open the application.
@@ -45,10 +58,19 @@ Watch a video demonstration of SQLite Editor on [YouTube](https://www.youtube.co
 
 We welcome contributions! Please follow these steps:
 
-1. Fork the repository.
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
+1. Fork the repository: [https://github.com/srdzank/SQLite-Editor.git](https://github.com/srdzank/SQLite-Editor.git).
+2. Create your feature branch:
+    ```sh
+    git checkout -b feature/AmazingFeature
+    ```
+3. Commit your changes:
+    ```sh
+    git commit -m 'Add some AmazingFeature'
+    ```
+4. Push to the branch:
+    ```sh
+    git push origin feature/AmazingFeature
+    ```
 5. Open a Pull Request.
 
 ## License
