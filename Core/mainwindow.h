@@ -14,6 +14,8 @@
 #include "SQLParserAPI.h"  // Include your SQL parser API header
 #include "SQLWorkSpace/CSQLWorkSpace.h"  // Include the custom CSQLWorkSpace header
 #include <QLabel>
+#include "ERDiagram/CERDiagram.h"
+
 
 
 namespace Ui {
@@ -39,6 +41,7 @@ private:
     QCompleter* completer;
     QStringListModel* completerModel;
     QString lastOpenedFileName;
+    ERDiagram* erDiagram;
 
     void CreateMenu();
     void createToolBar();
@@ -56,7 +59,7 @@ private slots:
     void onSQLTextChanged();  // New slot for SQL text changes
     void onExecuteSQL(const QString& query);  // Slot for executing SQL
     void onClearSQL();  // Slot for clearing SQL input
-
+    void erDiagramProc();
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void executeSQLCommand(sqlite3* db, const QString& eSql);  // Add this line

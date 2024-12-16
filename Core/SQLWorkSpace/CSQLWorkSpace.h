@@ -21,16 +21,19 @@ public:
     AutoCompleteTextEdit* sqlInput;
     QPushButton* executeButton;
     QPushButton* clearButton;
+    QPushButton* ERDiagramButton;
     QCompleter* completer;
     QStringListModel* completerModel;
     QLabel* errorLabel;
 signals:
     void executeSQL(const QString& query);
     void clearSQL();
+    void erDiagram();
 
 private slots:
     void onExecuteButtonClicked();
     void onClearButtonClicked();
+    void onERDiagramClicked();
 
 private:
     QVBoxLayout* layout;

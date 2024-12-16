@@ -11,11 +11,13 @@ CSQLWorkSpace::CSQLWorkSpace(QWidget* parent) : QWidget(parent)
     // Create buttons
     executeButton = new QPushButton("Execute", this);
     clearButton = new QPushButton("Clear", this);
+    ERDiagramButton = new QPushButton("ER Diagram", this);
 
     // Create a horizontal layout for buttons
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(executeButton);
     buttonLayout->addWidget(clearButton);
+    buttonLayout->addWidget(ERDiagramButton);
 
     // Add widgets to the main layout
     layout->addLayout(buttonLayout);
@@ -42,6 +44,8 @@ CSQLWorkSpace::CSQLWorkSpace(QWidget* parent) : QWidget(parent)
     // Connect buttons to their slots
     connect(executeButton, &QPushButton::clicked, this, &CSQLWorkSpace::onExecuteButtonClicked);
     connect(clearButton, &QPushButton::clicked, this, &CSQLWorkSpace::onClearButtonClicked);
+    connect(ERDiagramButton, &QPushButton::clicked, this, &CSQLWorkSpace::onERDiagramClicked);
+
     errorLabel->hide();
 }
 
@@ -58,6 +62,12 @@ void CSQLWorkSpace::onClearButtonClicked()
 {
     sqlInput->clear();
     emit clearSQL();
+}
+
+
+void CSQLWorkSpace::onERDiagramClicked()
+{
+    emit erDiagram();
 }
 
 void CSQLWorkSpace::applyCompleterStyles()

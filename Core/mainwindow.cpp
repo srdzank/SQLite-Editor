@@ -62,6 +62,8 @@ MainWindow::MainWindow(QWidget* parent)
     // Connect signals from customWidget to MainWindow slots
     connect(customWidget, SIGNAL(executeSQL(const QString&)), this, SLOT(onExecuteSQL(const QString&)));
     connect(customWidget, SIGNAL(clearSQL()), this, SLOT(onClearSQL()));
+    connect(customWidget, SIGNAL(erDiagram()), this, SLOT(erDiagramProc()));
+   
 
     // Create the completer
     completerModel = new QStringListModel(this);
@@ -78,6 +80,8 @@ MainWindow::MainWindow(QWidget* parent)
     this->statusBar()->showMessage("Copyright (c) by Srdzan Kostenarov");
     this->statusBar()->setStyleSheet("QStatusBar { background-color: #767676; color: white; }");
 }
+
+
 
 MainWindow::~MainWindow()
 {
@@ -213,6 +217,7 @@ void MainWindow::onActionOpen()
 {
     LOG("File is open");
     if (m_db) {
+        delete erDiagram;
         closeDatabase(m_db);
     }
 
@@ -233,6 +238,12 @@ void MainWindow::onActionOpen()
         QString sql = "SELECT * FROM users;";
 
         updateLastOpenedFileName(fileName); // Add this line to update the menu
+        // Inside your main window or a dedicated widget
+        
+        erDiagram = new ERDiagram(m_db, this);
+        erDiagram->generateDiagram();
+        erDiagram->hide();
+        layout->addWidget(erDiagram);
     }
 }
 
@@ -291,6 +302,19 @@ void MainWindow::onClearSQL()
     customWidget->sqlInput->clear();
 }
 
+
+void MainWindow::erDiagramProc()
+{
+    if (erDiagram->isVisible()) {
+        erDiagram->hide();
+        tableViewWidget->show();
+    }
+    else {
+        erDiagram->show();
+        tableViewWidget->hide();
+    }
+}
+
 void MainWindow::onCustomButtonClicked()
 {
     LOG("onCustomButtonClicked is clicked");
@@ -298,10 +322,6 @@ void MainWindow::onCustomButtonClicked()
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-    //int w = event->size().width();
-    //int h = event->size().height();
-    //customWidget->setGeometry(QRect(0, h - 300, w - 100, 250));
-    //c->setGeometry(QRect(0, 50, 250, 50));
 
     QMainWindow::resizeEvent(event);
 }
