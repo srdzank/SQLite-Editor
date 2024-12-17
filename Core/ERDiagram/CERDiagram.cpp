@@ -119,6 +119,23 @@ void ERDiagram::createTableNode(const QString& tableName, const QVector<QString>
     tableNodes[tableName] = { group, rect, header, fieldItems };
 }
 
+//void ERDiagram::createRelationship(const QString& fromTable, const QString& toTable) {
+//    if (!tableNodes.contains(fromTable) || !tableNodes.contains(toTable))
+//        return;
+//
+//    QRectF fromRect = tableNodes[fromTable].rect->sceneBoundingRect();
+//    QRectF toRect = tableNodes[toTable].rect->sceneBoundingRect();
+//
+//    QPointF fromCenter = fromRect.center();
+//    QPointF toCenter = toRect.center();
+//
+//    QPainterPath path(fromCenter);
+//    path.lineTo(toCenter);
+//
+//    QGraphicsPathItem* relationship = scene->addPath(path, QPen(Qt::blue, 2));
+//    relationships.append(RelationshipLine(relationship, fromTable, toTable));
+//}
+
 void ERDiagram::createRelationship(const QString& fromTable, const QString& toTable) {
     if (!tableNodes.contains(fromTable) || !tableNodes.contains(toTable))
         return;
@@ -129,17 +146,69 @@ void ERDiagram::createRelationship(const QString& fromTable, const QString& toTa
     QPointF fromCenter = fromRect.center();
     QPointF toCenter = toRect.center();
 
-    QPainterPath path(fromCenter);
-    path.lineTo(toCenter);
+    // Calculate control points for the curve
+    QPointF controlPoint1 = fromCenter + QPointF((toCenter.x() - fromCenter.x()) / 3, -50);
+    QPointF controlPoint2 = toCenter + QPointF((fromCenter.x() - toCenter.x()) / 3, 50);
 
-    QGraphicsPathItem* relationship = scene->addPath(path, QPen(Qt::blue, 2));
-    relationships.append(RelationshipLine(relationship, fromTable, toTable));
+    // Create a cubic Bézier curve
+    QPainterPath path(fromCenter);
+    path.cubicTo(controlPoint1, controlPoint2, toCenter);
+
+    // Add the path to the scene
+    QGraphicsPathItem* relationshipPath = scene->addPath(path, QPen(Qt::blue, 2));
+
+    // Create the arrowhead
+    QGraphicsPolygonItem* arrow = createArrowhead(path, toCenter);
+
+    // Store the relationship with both path and arrow
+    relationships.append(RelationshipLine(relationshipPath, arrow, fromTable, toTable));
 }
+
+
+QGraphicsPolygonItem* ERDiagram::createArrowhead(const QPainterPath& path, const QPointF& toCenter) {
+    QPointF lineEnd = path.currentPosition();
+    QPointF lineStart = path.pointAtPercent(0.99);
+
+    QLineF direction(lineStart, lineEnd);
+    double angle = std::atan2(-direction.dy(), direction.dx());
+
+    qreal arrowSize = 10.0;
+    QPolygonF arrowHead;
+    arrowHead << lineEnd
+        << QPointF(lineEnd.x() - arrowSize * std::cos(angle - M_PI / 6),
+            lineEnd.y() - arrowSize * std::sin(angle - M_PI / 6))
+        << QPointF(lineEnd.x() - arrowSize * std::cos(angle + M_PI / 6),
+            lineEnd.y() - arrowSize * std::sin(angle + M_PI / 6));
+
+    return scene->addPolygon(arrowHead, QPen(Qt::blue), QBrush(Qt::blue));
+}
+
+
+//void ERDiagram::updateRelationshipPositions() {
+//    for (auto& relationship : relationships) {
+//        const QString& fromTable = relationship.fromTable;
+//        const QString& toTable = relationship.toTable;
+//
+//        QRectF fromRect = tableNodes[fromTable].rect->sceneBoundingRect();
+//        QRectF toRect = tableNodes[toTable].rect->sceneBoundingRect();
+//
+//        QPointF fromCenter = fromRect.center();
+//        QPointF toCenter = toRect.center();
+//
+//        QPainterPath path(fromCenter);
+//        path.lineTo(toCenter);
+//
+//        relationship.path->setPath(path);
+//    }
+//}
 
 void ERDiagram::updateRelationshipPositions() {
     for (auto& relationship : relationships) {
         const QString& fromTable = relationship.fromTable;
         const QString& toTable = relationship.toTable;
+
+        if (!tableNodes.contains(fromTable) || !tableNodes.contains(toTable))
+            continue;
 
         QRectF fromRect = tableNodes[fromTable].rect->sceneBoundingRect();
         QRectF toRect = tableNodes[toTable].rect->sceneBoundingRect();
@@ -147,9 +216,21 @@ void ERDiagram::updateRelationshipPositions() {
         QPointF fromCenter = fromRect.center();
         QPointF toCenter = toRect.center();
 
-        QPainterPath path(fromCenter);
-        path.lineTo(toCenter);
+        // Calculate control points for the curve
+        QPointF controlPoint1 = fromCenter + QPointF((toCenter.x() - fromCenter.x()) / 3, -50);
+        QPointF controlPoint2 = toCenter + QPointF((fromCenter.x() - toCenter.x()) / 3, 50);
 
+        QPainterPath path(fromCenter);
+        path.cubicTo(controlPoint1, controlPoint2, toCenter);
+
+        // Update the line path
         relationship.path->setPath(path);
+
+        // Remove and recreate the arrowhead
+        if (relationship.arrow) {
+            scene->removeItem(relationship.arrow);
+            delete relationship.arrow;
+        }
+        relationship.arrow = createArrowhead(path, toCenter);
     }
 }

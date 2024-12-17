@@ -15,7 +15,7 @@
 #include "SQLWorkSpace/CSQLWorkSpace.h"  // Include the custom CSQLWorkSpace header
 #include <QLabel>
 #include "ERDiagram/CERDiagram.h"
-
+#include "TableEditorDialog/CTableEditorDialog.h"
 
 
 namespace Ui {

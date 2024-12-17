@@ -318,6 +318,8 @@ void MainWindow::erDiagramProc()
 void MainWindow::onCustomButtonClicked()
 {
     LOG("onCustomButtonClicked is clicked");
+    TableEditorDialog dialog(m_db, this); // Pass the SQLite handle
+    dialog.exec();
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)

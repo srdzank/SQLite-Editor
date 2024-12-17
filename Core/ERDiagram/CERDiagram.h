@@ -27,16 +27,29 @@ private:
 };
 
 // Represents a relationship line between two tables
+//class RelationshipLine {
+//public:
+//    RelationshipLine(QGraphicsPathItem* path, const QString& fromTable, const QString& toTable)
+//        : path(path), fromTable(fromTable), toTable(toTable) {
+//    }
+//
+//    QGraphicsPathItem* path;
+//    QString fromTable;
+//    QString toTable;
+//};
+
 class RelationshipLine {
 public:
-    RelationshipLine(QGraphicsPathItem* path, const QString& fromTable, const QString& toTable)
-        : path(path), fromTable(fromTable), toTable(toTable) {
+    RelationshipLine(QGraphicsPathItem* path, QGraphicsPolygonItem* arrow, const QString& fromTable, const QString& toTable)
+        : path(path), arrow(arrow), fromTable(fromTable), toTable(toTable) {
     }
 
-    QGraphicsPathItem* path;
-    QString fromTable;
-    QString toTable;
+    QGraphicsPathItem* path;        // Path for the line
+    QGraphicsPolygonItem* arrow;    // Pointer to the arrowhead
+    QString fromTable;              // Table where the relationship starts
+    QString toTable;                // Table where the relationship ends
 };
+
 
 // Manages the entire ER diagram
 class ERDiagram : public QGraphicsView {
@@ -65,6 +78,8 @@ private:
 
     void createTableNode(const QString& tableName, const QVector<QString>& fields, qreal x, qreal y);
     void createRelationship(const QString& fromTable, const QString& toTable);
+    QGraphicsPolygonItem* createArrowhead(const QPainterPath& path, const QPointF& toCenter);
+
 };
 
 #endif // ERDIAGRAM_H
