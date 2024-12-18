@@ -1,43 +1,49 @@
-#ifndef TABLEEDITORDIALOG_H
-#define TABLEEDITORDIALOG_H
+#ifndef CTABLEMANAGERDIALOG_H
+#define CTABLEMANAGERDIALOG_H
 
 #include <QDialog>
 #include <QTableWidget>
-#include <QLineEdit>
+#include <QComboBox>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QComboBox>
-#include <QHeaderView>
+#include <QLineEdit>
 #include <QMessageBox>
 #include <sqlite3.h>
 
-class TableEditorDialog : public QDialog {
+class CTableManagerDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit TableEditorDialog(sqlite3* db, QWidget* parent = nullptr);
-    void loadExistingTable(const QString& tableName);
+    explicit CTableManagerDialog(sqlite3* db, QWidget* parent = nullptr);
 
 private slots:
+    void createTable();
+    void deleteTable();
+    void loadTableSchema(const QString& tableName);
+    void saveTableChanges();
     void addColumn();
     void removeColumn();
-    void saveTable();
+    void refreshTableList();
 
 private:
-    sqlite3* m_db;
-    QString m_existingTable;
+    sqlite3* m_db;               // SQLite database connection
+    QString m_currentTable;      // Name of the current table being edited
 
-    QLineEdit* tableNameInput;
-    QTableWidget* columnTable;
+    // UI Elements
+    QComboBox* tableSelector;    // Dropdown to select a table
+    QLineEdit* tableNameInput;   // Input for new table name
+    QTableWidget* columnTable;   // Table for managing columns
     QPushButton* addColumnButton;
     QPushButton* removeColumnButton;
-    QPushButton* saveButton;
+    QPushButton* createTableButton;
+    QPushButton* deleteTableButton;
+    QPushButton* saveChangesButton;
 
-    QString generateCreateTableQuery();
-    void loadTableSchema(const QString& tableName);
-    QComboBox* createTypeComboBox(); // Helper to create type dropdown
+    QString generateCreateTableQuery(const QString& tableNameOverride = QString());
+    bool alterTable();
+    QComboBox* createTypeComboBox();
 };
 
-#endif // TABLEEDITORDIALOG_H
+#endif // CTABLEMANAGERDIALOG_H

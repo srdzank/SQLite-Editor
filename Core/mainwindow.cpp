@@ -132,7 +132,7 @@ void MainWindow::createToolBar()
     connect(customAction, &QAction::triggered, this, &MainWindow::onCustomButtonClicked);
 
     // Add the action to the toolbar
-    toolBar->addAction(customAction);
+    //toolBar->addAction(customAction);
 
     // Create a QLineEdit and add it to the toolbar
     //QLineEdit* lineEdit = new QLineEdit(this);
@@ -142,10 +142,17 @@ void MainWindow::createToolBar()
 //    toolBar->addWidget(lineEdit);
 
     // Create an action for the toolbar
-    QAction* customAction2 = new QAction(QIcon(":/pic1.png"), "Custom Button", this);
-    connect(customAction2, &QAction::triggered, this, &MainWindow::onCustomButtonClicked);
+    QAction* customAction2 = new QAction(QIcon(":/table_create.png"), "Create Table Dialog", this);
+    connect(customAction2, &QAction::triggered, this, &MainWindow::onTableCreateDialogClicked);
+
+    QAction* customAction3 = new QAction(QIcon(":/table_edit.png"), "Table Edit Dialog", this);
+    connect(customAction3, &QAction::triggered, this, &MainWindow::onTableEditDialogClicked);
+
+
     // Add the action to the toolbar
-//    toolBar->addAction(customAction2);
+    toolBar->addAction(customAction2);
+    toolBar->addAction(customAction3);
+
     addToolBar(Qt::BottomToolBarArea, toolBar);
 
     LOG("Main ToolBar is created");
@@ -286,6 +293,7 @@ void MainWindow::executeSQLCommand(sqlite3* db, const QString& eSql) {
 
 
 void MainWindow::procClickedTableItem(const QString& table) {
+    m_table = table;
     QString sql = "SELECT * FROM " + table + " LIMIT 10;";
     executeSQLCommand(m_db, sql);
 
@@ -318,8 +326,22 @@ void MainWindow::erDiagramProc()
 void MainWindow::onCustomButtonClicked()
 {
     LOG("onCustomButtonClicked is clicked");
-    TableEditorDialog dialog(m_db, this); // Pass the SQLite handle
+
+}
+
+
+void MainWindow::onTableCreateDialogClicked()
+{
+    LOG("onCustomButtonClicked is clicked");
+    CTableManagerDialog  dialog(m_db, this); // Pass the SQLite handle
     dialog.exec();
+    navigator->openDatabase(m_db);
+}
+
+void MainWindow::onTableEditDialogClicked()
+{
+    LOG("onCustomButtonClicked is clicked");
+
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)

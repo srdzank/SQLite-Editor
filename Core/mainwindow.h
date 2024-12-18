@@ -33,6 +33,7 @@ public:
 private:
     Ui::MainWindow* ui;
     sqlite3* m_db;
+    QString m_table;
     QVBoxLayout* layout;
     QSplitter* splitter;
     CSQLWorkSpace* customWidget;  // Use the custom CSQLWorkSpace
@@ -55,6 +56,8 @@ private slots:
     void onActionExit();
     void onActionOpen();
     void onCustomButtonClicked();
+    void onTableCreateDialogClicked();
+    void onTableEditDialogClicked();
     void procClickedTableItem(const QString& table);
     void onSQLTextChanged();  // New slot for SQL text changes
     void onExecuteSQL(const QString& query);  // Slot for executing SQL
