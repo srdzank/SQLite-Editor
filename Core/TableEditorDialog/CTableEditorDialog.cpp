@@ -155,13 +155,15 @@ void CTableManagerDialog::deleteTable() {
 void CTableManagerDialog::loadTableSchema(const QString& tableName) {
     m_currentTable = tableName;
     columnTable->setRowCount(0);
+    foreignKeyTable->setRowCount(0); // Clear foreign key table
 
-    QString query = QString("PRAGMA table_info(%1);").arg(tableName);
-    sqlite3_stmt* stmt;
-
-    if (tableName.isNull()) {
+    if (tableName.isEmpty()) {
         return;
     }
+
+    // Load columns using PRAGMA table_info
+    QString query = QString("PRAGMA table_info(%1);").arg(tableName);
+    sqlite3_stmt* stmt;
 
     if (sqlite3_prepare_v2(m_db, query.toUtf8().constData(), -1, &stmt, nullptr) != SQLITE_OK) {
         QMessageBox::critical(this, "Error", "Failed to load table schema.");
@@ -181,7 +183,26 @@ void CTableManagerDialog::loadTableSchema(const QString& tableName) {
     }
 
     sqlite3_finalize(stmt);
+
+    // Load foreign keys using PRAGMA foreign_key_list
+    QString fkQuery = QString("PRAGMA foreign_key_list(%1);").arg(tableName);
+    if (sqlite3_prepare_v2(m_db, fkQuery.toUtf8().constData(), -1, &stmt, nullptr) != SQLITE_OK) {
+        QMessageBox::critical(this, "Error", "Failed to load foreign keys.");
+        return;
+    }
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int row = foreignKeyTable->rowCount();
+        foreignKeyTable->insertRow(row);
+
+        foreignKeyTable->setItem(row, 0, new QTableWidgetItem(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3))));
+        foreignKeyTable->setItem(row, 1, new QTableWidgetItem(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2))));
+        foreignKeyTable->setItem(row, 2, new QTableWidgetItem(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4))));
+    }
+
+    sqlite3_finalize(stmt);
 }
+
 
 void CTableManagerDialog::saveTableChanges() {
     if (alterTable()) {
@@ -211,6 +232,7 @@ void CTableManagerDialog::removeColumn() {
     }
 }
 
+
 QString CTableManagerDialog::generateCreateTableQuery(const QString& tableNameOverride) {
     QString tableName = tableNameOverride.isEmpty() ? tableNameInput->text() : tableNameOverride;
     QString queryStr = "CREATE TABLE " + tableName + " (";
@@ -235,8 +257,7 @@ QString CTableManagerDialog::generateCreateTableQuery(const QString& tableNameOv
     QStringList foreignKeyDefinitions;
     for (int i = 0; i < foreignKeyTable->rowCount(); ++i) {
         QString foreignKeyColumn = foreignKeyTable->item(i, 0)->text();
-        QComboBox* referencedTableCombo = qobject_cast<QComboBox*>(foreignKeyTable->cellWidget(i, 1));
-        QString referencedTable = referencedTableCombo ? referencedTableCombo->currentText() : "";
+        QString referencedTable = foreignKeyTable->item(i, 1)->text();
         QString referencedColumn = foreignKeyTable->item(i, 2)->text();
 
         QString foreignKeyDef = QString("FOREIGN KEY (%1) REFERENCES %2(%3)")
@@ -247,7 +268,6 @@ QString CTableManagerDialog::generateCreateTableQuery(const QString& tableNameOv
         foreignKeyDefinitions.append(foreignKeyDef);
     }
 
-    // Combine column definitions and foreign key constraints
     queryStr += columnDefinitions.join(", ");
     if (!foreignKeyDefinitions.isEmpty()) {
         queryStr += ", " + foreignKeyDefinitions.join(", ");
