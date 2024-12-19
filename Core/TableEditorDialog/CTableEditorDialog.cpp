@@ -62,6 +62,34 @@ CTableManagerDialog::CTableManagerDialog(sqlite3* db, QWidget* parent)
     connect(removeColumnButton, &QPushButton::clicked, this, &CTableManagerDialog::removeColumn);
     connect(saveChangesButton, &QPushButton::clicked, this, &CTableManagerDialog::saveTableChanges);
     connect(tableSelector, &QComboBox::currentTextChanged, this, &CTableManagerDialog::loadTableSchema);
+
+    manageIndexesButton = new QPushButton("Manage Indexes", this);
+    actionButtonLayout->addWidget(manageIndexesButton);
+    connect(manageIndexesButton, &QPushButton::clicked, this, &CTableManagerDialog::manageIndexes);
+
+    // Foreign Key Management UI
+    foreignKeyTable = new QTableWidget(this);
+    foreignKeyTable->setColumnCount(3);
+    foreignKeyTable->setHorizontalHeaderLabels({ "Foreign Key Column", "Referenced Table", "Referenced Column" });
+    foreignKeyTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    addForeignKeyButton = new QPushButton("Add Foreign Key", this);
+    removeForeignKeyButton = new QPushButton("Remove Foreign Key", this);
+
+    QHBoxLayout* foreignKeyButtonLayout = new QHBoxLayout();
+    foreignKeyButtonLayout->addWidget(addForeignKeyButton);
+    foreignKeyButtonLayout->addWidget(removeForeignKeyButton);
+
+    QVBoxLayout* foreignKeyLayout = new QVBoxLayout();
+    foreignKeyLayout->addWidget(foreignKeyTable);
+    foreignKeyLayout->addLayout(foreignKeyButtonLayout);
+
+    mainLayout->addLayout(foreignKeyLayout);
+
+    // Connect signals for foreign key management
+    connect(addForeignKeyButton, &QPushButton::clicked, this, &CTableManagerDialog::addForeignKey);
+    connect(removeForeignKeyButton, &QPushButton::clicked, this, &CTableManagerDialog::removeForeignKey);
+
 }
 
 void CTableManagerDialog::refreshTableList() {
@@ -157,13 +185,14 @@ void CTableManagerDialog::loadTableSchema(const QString& tableName) {
 
 void CTableManagerDialog::saveTableChanges() {
     if (alterTable()) {
-        QMessageBox::information(this, "Success", "Table changes saved successfully.");
+        QMessageBox::information(this, "Success", "Table changes saved successfully, including foreign keys.");
         refreshTableList();
     }
     else {
         QMessageBox::critical(this, "Error", "Failed to save table changes.");
     }
 }
+
 
 void CTableManagerDialog::addColumn() {
     int row = columnTable->rowCount();
@@ -202,42 +231,32 @@ QString CTableManagerDialog::generateCreateTableQuery(const QString& tableNameOv
         columnDefinitions.append(columnDef);
     }
 
-    queryStr += columnDefinitions.join(", ") + ");";
+    // Add foreign key constraints
+    QStringList foreignKeyDefinitions;
+    for (int i = 0; i < foreignKeyTable->rowCount(); ++i) {
+        QString foreignKeyColumn = foreignKeyTable->item(i, 0)->text();
+        QComboBox* referencedTableCombo = qobject_cast<QComboBox*>(foreignKeyTable->cellWidget(i, 1));
+        QString referencedTable = referencedTableCombo ? referencedTableCombo->currentText() : "";
+        QString referencedColumn = foreignKeyTable->item(i, 2)->text();
+
+        QString foreignKeyDef = QString("FOREIGN KEY (%1) REFERENCES %2(%3)")
+            .arg(foreignKeyColumn)
+            .arg(referencedTable)
+            .arg(referencedColumn);
+
+        foreignKeyDefinitions.append(foreignKeyDef);
+    }
+
+    // Combine column definitions and foreign key constraints
+    queryStr += columnDefinitions.join(", ");
+    if (!foreignKeyDefinitions.isEmpty()) {
+        queryStr += ", " + foreignKeyDefinitions.join(", ");
+    }
+
+    queryStr += ");";
     return queryStr;
 }
 
-//bool CTableManagerDialog::alterTable() {
-//    QString tempTableName = m_currentTable + "_temp";
-//
-//    QString createQuery = generateCreateTableQuery(tempTableName);
-//    QString copyDataQuery = QString("INSERT INTO %1 SELECT * FROM %2;").arg(tempTableName, m_currentTable);
-//    QString dropOldTableQuery = QString("DROP TABLE %1;").arg(m_currentTable);
-//    QString renameTableQuery = QString("ALTER TABLE %1 RENAME TO %2;").arg(tempTableName, m_currentTable);
-//
-//    char* errMsg = nullptr;
-//
-//    if (sqlite3_exec(m_db, createQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
-//        sqlite3_free(errMsg);
-//        return false;
-//    }
-//
-//    if (sqlite3_exec(m_db, copyDataQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
-//        sqlite3_free(errMsg);
-//        return false;
-//    }
-//
-//    if (sqlite3_exec(m_db, dropOldTableQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
-//        sqlite3_free(errMsg);
-//        return false;
-//    }
-//
-//    if (sqlite3_exec(m_db, renameTableQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
-//        sqlite3_free(errMsg);
-//        return false;
-//    }
-//
-//    return true;
-//}
 
 bool CTableManagerDialog::alterTable() {
     if (m_currentTable.isEmpty()) {
@@ -284,4 +303,154 @@ QComboBox* CTableManagerDialog::createTypeComboBox() {
     combo->setEditable(true);
     combo->addItems({ "INTEGER", "TEXT", "REAL", "BLOB", "NUMERIC" });
     return combo;
+}
+
+void CTableManagerDialog::manageIndexes() {
+    if (m_currentTable.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "No table selected to manage indexes.");
+        return;
+    }
+
+    QDialog indexDialog(this);
+    indexDialog.setWindowTitle(QString("Manage Indexes for '%1'").arg(m_currentTable));
+    indexDialog.resize(700, 400);
+
+    QVBoxLayout* layout = new QVBoxLayout(&indexDialog);
+
+    QLabel* indexesLabel = new QLabel(QString("Indexes for table '%1':").arg(m_currentTable));
+    QTableWidget* indexesTable = new QTableWidget(&indexDialog);
+    indexesTable->setColumnCount(2);
+    indexesTable->setHorizontalHeaderLabels({ "Index Name", "Indexed Columns" });
+    indexesTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    QPushButton* addIndexButton = new QPushButton("Add Index", &indexDialog);
+    QPushButton* deleteIndexButton = new QPushButton("Delete Index", &indexDialog);
+    QPushButton* closeButton = new QPushButton("Close", &indexDialog);
+
+    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(addIndexButton);
+    buttonLayout->addWidget(deleteIndexButton);
+    buttonLayout->addWidget(closeButton);
+
+    layout->addWidget(indexesLabel);
+    layout->addWidget(indexesTable);
+    layout->addLayout(buttonLayout);
+
+    connect(addIndexButton, &QPushButton::clicked, this, [=]() {
+        createIndex();
+        populateIndexes(indexesTable);
+        });
+
+    connect(deleteIndexButton, &QPushButton::clicked, this, [=]() {
+        deleteIndex();
+        populateIndexes(indexesTable);
+        });
+
+    connect(closeButton, &QPushButton::clicked, &indexDialog, &QDialog::accept);
+
+    populateIndexes(indexesTable);
+
+    indexDialog.exec(); // Open the dialog modally
+}
+
+void CTableManagerDialog::populateIndexes(QTableWidget* indexesTable) {
+    indexesTable->clearContents();
+    indexesTable->setRowCount(0);
+
+    QString query = QString("PRAGMA index_list('%1');").arg(m_currentTable);
+    sqlite3_stmt* stmt;
+
+    if (sqlite3_prepare_v2(m_db, query.toUtf8().constData(), -1, &stmt, nullptr) == SQLITE_OK) {
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            int row = indexesTable->rowCount();
+            indexesTable->insertRow(row);
+
+            QString indexName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            indexesTable->setItem(row, 0, new QTableWidgetItem(indexName));
+
+            // Get indexed columns
+            QString columnQuery = QString("PRAGMA index_info('%1');").arg(indexName);
+            sqlite3_stmt* columnStmt;
+            QStringList indexedColumns;
+            if (sqlite3_prepare_v2(m_db, columnQuery.toUtf8().constData(), -1, &columnStmt, nullptr) == SQLITE_OK) {
+                while (sqlite3_step(columnStmt) == SQLITE_ROW) {
+                    indexedColumns.append(reinterpret_cast<const char*>(sqlite3_column_text(columnStmt, 2)));
+                }
+                sqlite3_finalize(columnStmt);
+            }
+            indexesTable->setItem(row, 1, new QTableWidgetItem(indexedColumns.join(", ")));
+        }
+        sqlite3_finalize(stmt);
+    }
+}
+
+void CTableManagerDialog::createIndex() {
+    bool ok;
+    QString indexName = QInputDialog::getText(this, "Add Index", "Index Name:", QLineEdit::Normal, "", &ok);
+    if (!ok || indexName.isEmpty()) return;
+
+    QString columns = QInputDialog::getText(this, "Add Index", "Comma-separated columns to index:", QLineEdit::Normal, "", &ok);
+    if (!ok || columns.isEmpty()) return;
+
+    QString createIndexQuery = QString("CREATE INDEX IF NOT EXISTS %1 ON %2 (%3);")
+        .arg(indexName)
+        .arg(m_currentTable)
+        .arg(columns);
+    char* errMsg = nullptr;
+
+    if (sqlite3_exec(m_db, createIndexQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+        QMessageBox::critical(this, "Error", QString("Failed to create index: %1").arg(errMsg));
+        sqlite3_free(errMsg);
+    }
+    else {
+        QMessageBox::information(this, "Success", "Index created successfully.");
+    }
+}
+
+
+void CTableManagerDialog::deleteIndex() {
+    bool ok;
+    QString indexName = QInputDialog::getText(this, "Delete Index", "Enter the name of the index to delete:", QLineEdit::Normal, "", &ok);
+    if (!ok || indexName.isEmpty()) return;
+
+    QString dropIndexQuery = QString("DROP INDEX IF EXISTS %1;").arg(indexName);
+    char* errMsg = nullptr;
+
+    if (sqlite3_exec(m_db, dropIndexQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+        QMessageBox::critical(this, "Error", QString("Failed to delete index: %1").arg(errMsg));
+        sqlite3_free(errMsg);
+    }
+    else {
+        QMessageBox::information(this, "Success", "Index deleted successfully.");
+    }
+}
+
+void CTableManagerDialog::addForeignKey() {
+    int row = foreignKeyTable->rowCount();
+    foreignKeyTable->insertRow(row);
+
+    // Foreign Key Column
+    QTableWidgetItem* foreignKeyColumnItem = new QTableWidgetItem();
+    foreignKeyTable->setItem(row, 0, foreignKeyColumnItem);
+
+    // Referenced Table
+    QComboBox* referencedTableCombo = new QComboBox(this);
+
+    // Populate the combo box with table names from `tableSelector`
+    for (int i = 0; i < tableSelector->count(); ++i) {
+        referencedTableCombo->addItem(tableSelector->itemText(i));
+    }
+    foreignKeyTable->setCellWidget(row, 1, referencedTableCombo);
+
+    // Referenced Column
+    QTableWidgetItem* referencedColumnItem = new QTableWidgetItem();
+    foreignKeyTable->setItem(row, 2, referencedColumnItem);
+}
+
+
+void CTableManagerDialog::removeForeignKey() {
+    int currentRow = foreignKeyTable->currentRow();
+    if (currentRow >= 0) {
+        foreignKeyTable->removeRow(currentRow);
+    }
 }
