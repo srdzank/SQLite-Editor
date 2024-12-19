@@ -237,6 +237,7 @@ QString CTableManagerDialog::generateCreateTableQuery(const QString& tableNameOv
     QString tableName = tableNameOverride.isEmpty() ? tableNameInput->text() : tableNameOverride;
     QString queryStr = "CREATE TABLE " + tableName + " (";
 
+    // Collect column definitions
     QStringList columnDefinitions;
     for (int i = 0; i < columnTable->rowCount(); ++i) {
         QString columnName = columnTable->item(i, 0)->text();
@@ -253,21 +254,29 @@ QString CTableManagerDialog::generateCreateTableQuery(const QString& tableNameOv
         columnDefinitions.append(columnDef);
     }
 
-    // Add foreign key constraints
+    // Collect foreign key definitions
     QStringList foreignKeyDefinitions;
     for (int i = 0; i < foreignKeyTable->rowCount(); ++i) {
-        QString foreignKeyColumn = foreignKeyTable->item(i, 0)->text();
-        QString referencedTable = foreignKeyTable->item(i, 1)->text();
-        QString referencedColumn = foreignKeyTable->item(i, 2)->text();
+        // Retrieve foreign key column
+        QString foreignKeyColumn = foreignKeyTable->item(i, 0) ? foreignKeyTable->item(i, 0)->text() : "";
 
-        QString foreignKeyDef = QString("FOREIGN KEY (%1) REFERENCES %2(%3)")
-            .arg(foreignKeyColumn)
-            .arg(referencedTable)
-            .arg(referencedColumn);
+        // Retrieve referenced table from combo box
+        QComboBox* referencedTableCombo = qobject_cast<QComboBox*>(foreignKeyTable->cellWidget(i, 1));
+        QString referencedTable = referencedTableCombo ? referencedTableCombo->currentText() : "";
 
-        foreignKeyDefinitions.append(foreignKeyDef);
+        // Retrieve referenced column
+        QString referencedColumn = foreignKeyTable->item(i, 2) ? foreignKeyTable->item(i, 2)->text() : "";
+
+        if (!foreignKeyColumn.isEmpty() && !referencedTable.isEmpty() && !referencedColumn.isEmpty()) {
+            QString foreignKeyDef = QString("FOREIGN KEY (%1) REFERENCES %2(%3)")
+                .arg(foreignKeyColumn)
+                .arg(referencedTable)
+                .arg(referencedColumn);
+            foreignKeyDefinitions.append(foreignKeyDef);
+        }
     }
 
+    // Combine column definitions and foreign key constraints
     queryStr += columnDefinitions.join(", ");
     if (!foreignKeyDefinitions.isEmpty()) {
         queryStr += ", " + foreignKeyDefinitions.join(", ");

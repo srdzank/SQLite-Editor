@@ -6,5 +6,6 @@
         <file>pic1.png</file>
         <file>table_create.png</file>
         <file>table_edit.png</file>
+        <file>foreign_key.png</file>
     </qresource>
 </RCC>

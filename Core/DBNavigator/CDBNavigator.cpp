@@ -106,35 +106,52 @@ void CDBNavigator::populateTreeWidget()
 {
     treeWidget->clear();
 
-    // Load icons
     QIcon tableIcon(tableIconPath);
     QIcon columnIcon(columnIconPath);
     QIcon indexIcon(indexIconPath);
+    QIcon foreignKeyIcon(":/foreign_key.png"); // Replace with your foreign key icon path
 
     std::vector<std::string> tables = getTables(db);
     for (const std::string& tableName : tables) {
         QTreeWidgetItem* tableItem = new QTreeWidgetItem(treeWidget);
         tableItem->setText(0, QString::fromStdString(tableName));
-        tableItem->setIcon(0, tableIcon); // Set table icon
-        tableItem->setToolTip(0, "Table: " + QString::fromStdString(tableName)); // Set tooltip for table
+        tableItem->setIcon(0, tableIcon);
+        tableItem->setToolTip(0, "Table: " + QString::fromStdString(tableName));
 
+        // Add columns
         std::vector<std::pair<std::string, std::string>> columns = getTableColumns(tableName);
         for (const auto& column : columns) {
             QTreeWidgetItem* columnItem = new QTreeWidgetItem(tableItem);
             columnItem->setText(0, QString::fromStdString(column.first) + " (" + QString::fromStdString(column.second) + ")");
-            columnItem->setIcon(0, columnIcon); // Set column icon
-            columnItem->setToolTip(0, "Column: " + QString::fromStdString(column.first) + "\nType: " + QString::fromStdString(column.second)); // Set tooltip for column
+            columnItem->setIcon(0, columnIcon);
+            columnItem->setToolTip(0, "Column: " + QString::fromStdString(column.first) + "\nType: " + QString::fromStdString(column.second));
         }
 
+        // Add indices
         std::vector<std::string> indices = getTableIndices(tableName);
         for (const auto& index : indices) {
             QTreeWidgetItem* indexItem = new QTreeWidgetItem(tableItem);
             indexItem->setText(0, QString::fromStdString(index));
-            indexItem->setIcon(0, indexIcon); // Set index icon
-            indexItem->setToolTip(0, "Index: " + QString::fromStdString(index)); // Set tooltip for index
+            indexItem->setIcon(0, indexIcon);
+            indexItem->setToolTip(0, "Index: " + QString::fromStdString(index));
+        }
+
+        // Add foreign keys
+        std::vector<std::tuple<std::string, std::string, std::string>> foreignKeys = getForeignKeys(tableName);
+        for (const auto& foreignKey : foreignKeys) {
+            QTreeWidgetItem* foreignKeyItem = new QTreeWidgetItem(tableItem);
+            foreignKeyItem->setText(0, QString::fromStdString(std::get<0>(foreignKey)) +
+                " -> " +
+                QString::fromStdString(std::get<1>(foreignKey)) +
+                "(" + QString::fromStdString(std::get<2>(foreignKey)) + ")");
+            foreignKeyItem->setIcon(0, foreignKeyIcon);
+            foreignKeyItem->setToolTip(0, "Foreign Key Column: " + QString::fromStdString(std::get<0>(foreignKey)) +
+                "\nReferences: " + QString::fromStdString(std::get<1>(foreignKey)) +
+                "(" + QString::fromStdString(std::get<2>(foreignKey)) + ")");
         }
     }
 }
+
 
 void CDBNavigator::handleItemClick(QTreeWidgetItem* item, int column)
 {
@@ -169,3 +186,31 @@ std::vector<std::string> CDBNavigator::columnNames(const std::string tableName) 
     sqlite3_finalize(stmt);
     return columns;
 }
+
+std::vector<std::tuple<std::string, std::string, std::string>> CDBNavigator::getForeignKeys(const std::string& tableName) {
+    std::vector<std::tuple<std::string, std::string, std::string>> foreignKeys;
+    std::string sql = "PRAGMA foreign_key_list(" + tableName + ");";
+    sqlite3_stmt* stmt;
+
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, 0) != SQLITE_OK) {
+        qWarning() << "Failed to fetch foreign keys for table" << QString::fromStdString(tableName) << ":" << sqlite3_errmsg(db);
+        return foreignKeys;
+    }
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        const unsigned char* column = sqlite3_column_text(stmt, 3);
+        const unsigned char* referencedTable = sqlite3_column_text(stmt, 2);
+        const unsigned char* referencedColumn = sqlite3_column_text(stmt, 4);
+
+        foreignKeys.emplace_back(
+            reinterpret_cast<const char*>(column),
+            reinterpret_cast<const char*>(referencedTable),
+            reinterpret_cast<const char*>(referencedColumn)
+        );
+    }
+
+    sqlite3_finalize(stmt);
+    return foreignKeys;
+}
+
+

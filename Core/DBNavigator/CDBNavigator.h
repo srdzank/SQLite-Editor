@@ -25,6 +25,7 @@ private:
     std::vector<std::string> getTables(sqlite3* db);
     std::vector<std::pair<std::string, std::string>> getTableColumns(const std::string& tableName);
     std::vector<std::string> getTableIndices(const std::string& tableName); // New method for indices
+    std::vector<std::tuple<std::string, std::string, std::string>> getForeignKeys(const std::string& tableName);
     void populateTreeWidget();
 
 signals:

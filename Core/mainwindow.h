@@ -63,6 +63,8 @@ private slots:
     void onExecuteSQL(const QString& query);  // Slot for executing SQL
     void onClearSQL();  // Slot for clearing SQL input
     void erDiagramProc();
+    void onNewDatabase();
+
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void executeSQLCommand(sqlite3* db, const QString& eSql);  // Add this line

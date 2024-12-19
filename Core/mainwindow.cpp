@@ -91,6 +91,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
 void MainWindow::CreateMenu()
 {
     // Create the menu bar
@@ -107,21 +108,57 @@ void MainWindow::CreateMenu()
     fileMenu->setObjectName("File");
 
     // Create actions for the file menu
+    QAction* newDatabaseAction = new QAction("New Database", this);
     QAction* openAction = new QAction("Open Database", this);
-//    QAction* saveAction = new QAction("Save", this);
     QAction* exitAction = new QAction("Exit", this);
 
     // Add actions to the file menu
+    fileMenu->addAction(newDatabaseAction);
     fileMenu->addAction(openAction);
-//    fileMenu->addAction(saveAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
+    connect(newDatabaseAction, &QAction::triggered, this, &MainWindow::onNewDatabase);
     connect(exitAction, &QAction::triggered, this, &MainWindow::onActionExit);
     connect(openAction, &QAction::triggered, this, &MainWindow::onActionOpen);
 
     LOG("Main Menu is created");
 }
+
+void MainWindow::onNewDatabase()
+{
+    // Open a dialog to enter the name and location for the new database
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Create New SQLite Database"),
+        "", tr("SQLite Database Files (*.sqlite *.db)"));
+
+    if (fileName.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "No file name provided.");
+        return;
+    }
+
+    // Attempt to create the database
+    sqlite3* newDb;
+    int result = sqlite3_open(fileName.toUtf8().constData(), &newDb);
+
+    if (result != SQLITE_OK) {
+        QMessageBox::critical(this, "Error", QString("Failed to create database: %1").arg(sqlite3_errmsg(newDb)));
+        sqlite3_close(newDb);
+        return;
+    }
+
+    // Close any previously opened database
+    if (m_db) {
+        closeDatabase(m_db);
+    }
+
+    // Update the current database
+    m_db = newDb;
+    QMessageBox::information(this, "Success", "Database created successfully.");
+
+    // Refresh the database navigator
+    navigator->openDatabase(m_db);
+}
+
 
 void MainWindow::createToolBar()
 {
