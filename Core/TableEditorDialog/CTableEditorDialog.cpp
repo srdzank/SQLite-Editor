@@ -206,38 +206,78 @@ QString CTableManagerDialog::generateCreateTableQuery(const QString& tableNameOv
     return queryStr;
 }
 
+//bool CTableManagerDialog::alterTable() {
+//    QString tempTableName = m_currentTable + "_temp";
+//
+//    QString createQuery = generateCreateTableQuery(tempTableName);
+//    QString copyDataQuery = QString("INSERT INTO %1 SELECT * FROM %2;").arg(tempTableName, m_currentTable);
+//    QString dropOldTableQuery = QString("DROP TABLE %1;").arg(m_currentTable);
+//    QString renameTableQuery = QString("ALTER TABLE %1 RENAME TO %2;").arg(tempTableName, m_currentTable);
+//
+//    char* errMsg = nullptr;
+//
+//    if (sqlite3_exec(m_db, createQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+//        sqlite3_free(errMsg);
+//        return false;
+//    }
+//
+//    if (sqlite3_exec(m_db, copyDataQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+//        sqlite3_free(errMsg);
+//        return false;
+//    }
+//
+//    if (sqlite3_exec(m_db, dropOldTableQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+//        sqlite3_free(errMsg);
+//        return false;
+//    }
+//
+//    if (sqlite3_exec(m_db, renameTableQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+//        sqlite3_free(errMsg);
+//        return false;
+//    }
+//
+//    return true;
+//}
+
 bool CTableManagerDialog::alterTable() {
-    QString tempTableName = m_currentTable + "_temp";
+    if (m_currentTable.isEmpty()) {
+        QMessageBox::critical(this, "Error", "No table selected for modification.");
+        return false;
+    }
 
-    QString createQuery = generateCreateTableQuery(tempTableName);
-    QString copyDataQuery = QString("INSERT INTO %1 SELECT * FROM %2;").arg(tempTableName, m_currentTable);
-    QString dropOldTableQuery = QString("DROP TABLE %1;").arg(m_currentTable);
-    QString renameTableQuery = QString("ALTER TABLE %1 RENAME TO %2;").arg(tempTableName, m_currentTable);
+    // Confirm deletion and recreation
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        "Modify Table",
+        QString("Modifying the table '%1' will delete its data. Do you want to proceed?").arg(m_currentTable),
+        QMessageBox::Yes | QMessageBox::No
+    );
 
+    if (reply != QMessageBox::Yes) {
+        return false; // User canceled
+    }
+
+    // Step 1: Drop the old table
+    QString dropTableQuery = QString("DROP TABLE IF EXISTS %1;").arg(m_currentTable);
     char* errMsg = nullptr;
 
-    if (sqlite3_exec(m_db, createQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+    if (sqlite3_exec(m_db, dropTableQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+        QMessageBox::critical(this, "Error", QString("Failed to delete the old table: %1").arg(errMsg));
         sqlite3_free(errMsg);
         return false;
     }
 
-    if (sqlite3_exec(m_db, copyDataQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+    // Step 2: Create the new table
+    QString createTableQuery = generateCreateTableQuery(m_currentTable);
+    if (sqlite3_exec(m_db, createTableQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
+        QMessageBox::critical(this, "Error", QString("Failed to create the new table: %1").arg(errMsg));
         sqlite3_free(errMsg);
         return false;
     }
 
-    if (sqlite3_exec(m_db, dropOldTableQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
-        sqlite3_free(errMsg);
-        return false;
-    }
-
-    if (sqlite3_exec(m_db, renameTableQuery.toUtf8().constData(), nullptr, nullptr, &errMsg) != SQLITE_OK) {
-        sqlite3_free(errMsg);
-        return false;
-    }
-
-    return true;
+    return true; // Successfully modified the table
 }
+
 
 QComboBox* CTableManagerDialog::createTypeComboBox() {
     QComboBox* combo = new QComboBox(this);

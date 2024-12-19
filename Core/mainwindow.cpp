@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
     LOG("Application started");
     m_db = nullptr;
+    erDiagram = nullptr;
     ui->setupUi(this);
     resize(1024, 768);
     setWindowTitle("SQLite Editor");
@@ -313,13 +314,21 @@ void MainWindow::onClearSQL()
 
 void MainWindow::erDiagramProc()
 {
+    if (erDiagram == nullptr) return;
+
     if (erDiagram->isVisible()) {
         erDiagram->hide();
         tableViewWidget->show();
     }
     else {
-        erDiagram->show();
-        tableViewWidget->hide();
+        delete erDiagram;
+        if(m_db){
+            erDiagram = new ERDiagram(m_db, this);
+            erDiagram->generateDiagram();
+            erDiagram->show();
+            layout->addWidget(erDiagram);
+            tableViewWidget->hide();
+        }
     }
 }
 
