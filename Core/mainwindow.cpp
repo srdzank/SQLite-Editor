@@ -192,10 +192,13 @@ void MainWindow::createToolBar()
     QAction* customAction3 = new QAction(QIcon(":/table_edit.png"), "Table Edit Dialog", this);
     connect(customAction3, &QAction::triggered, this, &MainWindow::onTableEditDialogClicked);
 
+    QAction* customAction4 = new QAction(QIcon(":/table_edit.png"), "Get SQL ", this);
+    connect(customAction4, &QAction::triggered, this, &MainWindow::onGetSQLQuery);
 
     // Add the action to the toolbar
     toolBar->addAction(customAction2);
     toolBar->addAction(customAction3);
+    toolBar->addAction(customAction4);
 
     addToolBar(Qt::BottomToolBarArea, toolBar);
 
@@ -401,6 +404,15 @@ void MainWindow::onTableEditDialogClicked()
     layout->addWidget(view);
 
 }
+
+void MainWindow::onGetSQLQuery()
+{
+    if (tableDiagram != nullptr){
+        QString sqlString = tableDiagram->generateSelectSQL();
+        customWidget->sqlInput->setPlainText(sqlString);
+    }
+}
+
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {

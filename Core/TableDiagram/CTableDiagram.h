@@ -30,18 +30,19 @@ class TableDiagram : public QGraphicsScene {
 public:
     explicit TableDiagram(sqlite3* db, QObject* parent = nullptr);
     void loadDatabaseSchema();
-    void updateConnections(CustomRectItem* table); // Change to public
+    void updateConnections(CustomRectItem* table); // Update connections when table is moved
+    QString generateSelectSQL();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
-    sqlite3* m_db;
-    QList<CustomRectItem*> tables;
-    QList<Relationship> relationships;
+    sqlite3* m_db;                          // SQLite database handle
+    QList<CustomRectItem*> tables;          // List of table nodes
+    QList<Relationship> relationships;      // List of relationships (connections)
 
-    QGraphicsEllipseItem* selectedPoint = nullptr;
-    QGraphicsLineItem* tempLine = nullptr;
+    QGraphicsEllipseItem* selectedPoint = nullptr; // Temporary selected connection point
+    QGraphicsLineItem* tempLine = nullptr;         // Temporary connection line
 
     void addTable(const QString& tableName, const QStringList& columns, const QPointF& position);
     QStringList getTableColumns(const QString& tableName);

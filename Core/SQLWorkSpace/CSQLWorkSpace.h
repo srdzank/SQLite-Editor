@@ -26,6 +26,7 @@ public:
     QStringListModel* completerModel;
     QLabel* errorLabel;
 signals:
+
     void executeSQL(const QString& query);
     void clearSQL();
     void erDiagram();

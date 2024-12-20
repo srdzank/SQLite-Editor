@@ -66,6 +66,7 @@ private slots:
     void onClearSQL();  // Slot for clearing SQL input
     void erDiagramProc();
     void onNewDatabase();
+    void onGetSQLQuery();
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
