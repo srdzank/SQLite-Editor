@@ -157,6 +157,12 @@ void MainWindow::onNewDatabase()
 
     // Refresh the database navigator
     navigator->openDatabase(m_db);
+    if (erDiagram == nullptr) {
+        erDiagram = new ERDiagram(m_db, this);
+        erDiagram->generateDiagram();
+        erDiagram->hide();
+        layout->addWidget(erDiagram);
+    }
 }
 
 
@@ -387,6 +393,12 @@ void MainWindow::onTableCreateDialogClicked()
 void MainWindow::onTableEditDialogClicked()
 {
     LOG("onCustomButtonClicked is clicked");
+    tableDiagram = new TableDiagram(m_db, this);
+    tableDiagram->loadDatabaseSchema();
+    // Add to your layout
+    QGraphicsView* view = new QGraphicsView(tableDiagram);
+    view->show();
+    layout->addWidget(view);
 
 }
 

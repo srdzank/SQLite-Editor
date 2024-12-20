@@ -16,6 +16,7 @@
 #include <QLabel>
 #include "ERDiagram/CERDiagram.h"
 #include "TableEditorDialog/CTableEditorDialog.h"
+#include "TableDiagram/CTableDiagram.h"
 
 
 namespace Ui {
@@ -43,6 +44,7 @@ private:
     QStringListModel* completerModel;
     QString lastOpenedFileName;
     ERDiagram* erDiagram;
+    TableDiagram* tableDiagram;
 
     void CreateMenu();
     void createToolBar();
