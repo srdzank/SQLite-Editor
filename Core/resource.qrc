@@ -7,5 +7,6 @@
         <file>table_create.png</file>
         <file>table_edit.png</file>
         <file>foreign_key.png</file>
+        <file>get_sql.png</file>
     </qresource>
 </RCC>

@@ -45,6 +45,7 @@ private:
     QString lastOpenedFileName;
     ERDiagram* erDiagram;
     TableDiagram* tableDiagram;
+    QGraphicsView* view;
 
     void CreateMenu();
     void createToolBar();

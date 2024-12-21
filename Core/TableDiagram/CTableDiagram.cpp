@@ -152,13 +152,6 @@ void TableDiagram::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     QGraphicsScene::mousePressEvent(event);
 }
 
-//void TableDiagram::addConnection(QGraphicsEllipseItem* start, QGraphicsEllipseItem* end) {
-////    QGraphicsLineItem* connectionLine = addLine(QLineF(start->scenePos(), end->scenePos()), QPen(Qt::green, 2));
-//    QGraphicsLineItem* connectionLine = addLine(QLineF(start->sceneBoundingRect().center(), end->sceneBoundingRect().center()), QPen(Qt::green, 2));
-//
-//    
-//    relationships.append({start, end, connectionLine});
-//}
 
 void TableDiagram::addConnection(QGraphicsEllipseItem* start, QGraphicsEllipseItem* end) {
     if (!start || !end || !start->parentItem() || !end->parentItem()) {
@@ -196,62 +189,129 @@ void TableDiagram::updateConnections(CustomRectItem* table) {
     }
 }
 
+//QString TableDiagram::generateSelectSQL() {
+//    if (relationships.isEmpty()) {
+//        return "No relationships defined for generating SQL.";
+//    }
+//
+//    QStringList selectFields;
+//    QStringList joinClauses;
+//    QString baseTable;
+//
+//    for (const auto& rel : relationships) {
+//        auto start = rel.start;
+//        auto end = rel.end;
+//
+//        // Retrieve table and column names
+//        QString startTable = start->parentItem()->data(0).toString(); // Table name
+//        QString startColumn = start->data(0).toString();             // Column name
+//        QString endTable = end->parentItem()->data(0).toString();    // Table name
+//        QString endColumn = end->data(0).toString();                 // Column name
+//
+//        // Debug relationships
+//        qDebug() << "Processing relationship:";
+//        qDebug() << "Start Table:" << startTable << ", Start Column:" << startColumn;
+//        qDebug() << "End Table:" << endTable << ", End Column:" << endColumn;
+//
+//        // Validate relationship data
+//        if (startTable.isEmpty() || startColumn.isEmpty() || endTable.isEmpty() || endColumn.isEmpty()) {
+//            qDebug() << "Invalid relationship encountered!";
+//            continue;
+//        }
+//
+//        // Add to SELECT clause
+//        if (!selectFields.contains(startTable + "." + startColumn)) {
+//            selectFields.append(startTable + "." + startColumn);
+//        }
+//        if (!selectFields.contains(endTable + "." + endColumn)) {
+//            selectFields.append(endTable + "." + endColumn);
+//        }
+//
+//        // Add to JOIN clause
+//        joinClauses.append(QString("JOIN %1 ON %2.%3 = %4.%5")
+//            .arg(endTable)
+//            .arg(startTable)
+//            .arg(startColumn)
+//            .arg(endTable)
+//            .arg(endColumn));
+//
+//        // Set base table
+//        if (baseTable.isEmpty()) {
+//            baseTable = startTable;
+//        }
+//    }
+//
+//    // Construct SQL query
+//    return QString("SELECT %1\nFROM %2\n%3;")
+//        .arg(selectFields.join(", "))
+//        .arg(baseTable)
+//        .arg(joinClauses.join("\n"));
+//}
+
 QString TableDiagram::generateSelectSQL() {
     if (relationships.isEmpty()) {
         return "No relationships defined for generating SQL.";
     }
 
-    QStringList selectFields;
-    QStringList joinClauses;
+    QStringList selectFields;  // Columns to SELECT
+    QStringList joinClauses;   // JOIN statements
+    QSet<QString> processedJoins; // Track processed JOIN pairs
+    QSet<QString> processedTables; // Track processed tables
     QString baseTable;
 
     for (const auto& rel : relationships) {
         auto start = rel.start;
         auto end = rel.end;
 
-        // Retrieve table and column names
+        // Extract table and column names from the start and end points
         QString startTable = start->parentItem()->data(0).toString(); // Table name
-        QString startColumn = start->data(0).toString();             // Column name
-        QString endTable = end->parentItem()->data(0).toString();    // Table name
-        QString endColumn = end->data(0).toString();                 // Column name
+        QString startColumn = start->data(0).toString();              // Column name
 
-        // Debug relationships
-        qDebug() << "Processing relationship:";
-        qDebug() << "Start Table:" << startTable << ", Start Column:" << startColumn;
-        qDebug() << "End Table:" << endTable << ", End Column:" << endColumn;
+        QString endTable = end->parentItem()->data(0).toString();     // Table name
+        QString endColumn = end->data(0).toString();                  // Column name
 
-        // Validate relationship data
+        // Ensure columns are valid
         if (startTable.isEmpty() || startColumn.isEmpty() || endTable.isEmpty() || endColumn.isEmpty()) {
-            qDebug() << "Invalid relationship encountered!";
             continue;
         }
 
-        // Add to SELECT clause
-        if (!selectFields.contains(startTable + "." + startColumn)) {
-            selectFields.append(startTable + "." + startColumn);
+        // Add fields to SELECT clause
+        QString startField = QString("%1.%2").arg(startTable, startColumn);
+        QString endField = QString("%1.%2").arg(endTable, endColumn);
+
+        if (!selectFields.contains(startField)) {
+            selectFields.append(startField);
         }
-        if (!selectFields.contains(endTable + "." + endColumn)) {
-            selectFields.append(endTable + "." + endColumn);
+        if (!selectFields.contains(endField)) {
+            selectFields.append(endField);
         }
 
-        // Add to JOIN clause
-        joinClauses.append(QString("JOIN %1 ON %2.%3 = %4.%5")
-            .arg(endTable)
-            .arg(startTable)
-            .arg(startColumn)
-            .arg(endTable)
-            .arg(endColumn));
-
-        // Set base table
+        // Set the base table (only once)
         if (baseTable.isEmpty()) {
             baseTable = startTable;
+            processedTables.insert(startTable);
+        }
+
+        // Ensure tables are processed in a proper JOIN sequence
+        if (!processedTables.contains(endTable)) {
+            QString joinClause = QString("JOIN %1 ON %2.%3 = %4.%5")
+                .arg(endTable)
+                .arg(startTable)
+                .arg(startColumn)
+                .arg(endTable)
+                .arg(endColumn);
+
+            if (!processedJoins.contains(joinClause)) {
+                joinClauses.append(joinClause);
+                processedJoins.insert(joinClause);
+                processedTables.insert(endTable);
+            }
         }
     }
 
-    // Construct SQL query
+    // Construct the final SQL query
     return QString("SELECT %1\nFROM %2\n%3;")
         .arg(selectFields.join(", "))
         .arg(baseTable)
         .arg(joinClauses.join("\n"));
 }
-

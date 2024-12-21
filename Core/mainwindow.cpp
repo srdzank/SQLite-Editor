@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget* parent)
     LOG("Application started");
     m_db = nullptr;
     erDiagram = nullptr;
+    tableDiagram = nullptr;
     ui->setupUi(this);
     resize(1024, 768);
     setWindowTitle("SQLite Editor");
@@ -189,10 +190,10 @@ void MainWindow::createToolBar()
     QAction* customAction2 = new QAction(QIcon(":/table_create.png"), "Create Table Dialog", this);
     connect(customAction2, &QAction::triggered, this, &MainWindow::onTableCreateDialogClicked);
 
-    QAction* customAction3 = new QAction(QIcon(":/table_edit.png"), "Table Edit Dialog", this);
+    QAction* customAction3 = new QAction(QIcon(":/table_edit.png"), "SQL-SELECT-Wizard", this);
     connect(customAction3, &QAction::triggered, this, &MainWindow::onTableEditDialogClicked);
 
-    QAction* customAction4 = new QAction(QIcon(":/table_edit.png"), "Get SQL ", this);
+    QAction* customAction4 = new QAction(QIcon(":/get_sql.png"), "Get SQL ", this);
     connect(customAction4, &QAction::triggered, this, &MainWindow::onGetSQLQuery);
 
     // Add the action to the toolbar
@@ -350,6 +351,11 @@ void MainWindow::procClickedTableItem(const QString& table) {
 void MainWindow::onExecuteSQL(const QString& query)
 {
     executeSQLCommand(m_db, query);  // Assuming table name is "results"
+    if (tableDiagram != nullptr) {
+        delete tableDiagram;
+        tableDiagram = nullptr;
+        delete view;
+    }
 }
 
 void MainWindow::onClearSQL()
@@ -399,7 +405,7 @@ void MainWindow::onTableEditDialogClicked()
     tableDiagram = new TableDiagram(m_db, this);
     tableDiagram->loadDatabaseSchema();
     // Add to your layout
-    QGraphicsView* view = new QGraphicsView(tableDiagram);
+    view = new QGraphicsView(tableDiagram);
     view->show();
     layout->addWidget(view);
 
