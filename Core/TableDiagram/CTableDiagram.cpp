@@ -129,28 +129,83 @@ void TableDiagram::addTable(const QString& tableName, const QStringList& columns
     addItem(table);
 }
 
+//void TableDiagram::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+//    QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
+//    if (clickedItem && dynamic_cast<QGraphicsEllipseItem*>(clickedItem)) {
+//        QGraphicsEllipseItem* clickedPoint = dynamic_cast<QGraphicsEllipseItem*>(clickedItem);
+//
+//        if (!selectedPoint) {
+//            selectedPoint = clickedPoint;
+//            tempLine = addLine(QLineF(clickedPoint->scenePos(), event->scenePos()), QPen(Qt::blue, 2));
+//        } else if (selectedPoint != clickedPoint) {
+//            addConnection(selectedPoint, clickedPoint);
+//
+//            delete tempLine;
+//            tempLine = nullptr;
+//            selectedPoint = nullptr;
+//        }
+//    } else if (tempLine) {
+//        delete tempLine;
+//        tempLine = nullptr;
+//        selectedPoint = nullptr;
+//    }
+//    QGraphicsScene::mousePressEvent(event);
+//}
+
 void TableDiagram::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
+
+    // Check if a connection line was clicked
+    if (auto* lineItem = dynamic_cast<QGraphicsLineItem*>(clickedItem)) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(nullptr, "Delete Connection", "Do you want to delete this connection?",
+            QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            removeConnection(lineItem);
+        }
+        return;
+    }
+
+    // Handle connection points and drawing connections
     if (clickedItem && dynamic_cast<QGraphicsEllipseItem*>(clickedItem)) {
         QGraphicsEllipseItem* clickedPoint = dynamic_cast<QGraphicsEllipseItem*>(clickedItem);
 
         if (!selectedPoint) {
             selectedPoint = clickedPoint;
             tempLine = addLine(QLineF(clickedPoint->scenePos(), event->scenePos()), QPen(Qt::blue, 2));
-        } else if (selectedPoint != clickedPoint) {
+        }
+        else if (selectedPoint != clickedPoint) {
             addConnection(selectedPoint, clickedPoint);
 
             delete tempLine;
             tempLine = nullptr;
             selectedPoint = nullptr;
         }
-    } else if (tempLine) {
+    }
+    else if (tempLine) {
         delete tempLine;
         tempLine = nullptr;
         selectedPoint = nullptr;
     }
+
     QGraphicsScene::mousePressEvent(event);
 }
+
+void TableDiagram::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
+    QGraphicsItem* hoveredItem = itemAt(event->scenePos(), QTransform());
+
+    if (auto* lineItem = dynamic_cast<QGraphicsLineItem*>(hoveredItem)) {
+        lineItem->setPen(QPen(Qt::red, 2)); // Highlight the connection
+    }
+    else {
+        for (auto& rel : relationships) {
+            rel.line->setPen(QPen(Qt::green, 2)); // Reset other connections
+        }
+    }
+
+    QGraphicsScene::mouseMoveEvent(event);
+}
+
 
 
 void TableDiagram::addConnection(QGraphicsEllipseItem* start, QGraphicsEllipseItem* end) {
@@ -314,4 +369,14 @@ QString TableDiagram::generateSelectSQL() {
         .arg(selectFields.join(", "))
         .arg(baseTable)
         .arg(joinClauses.join("\n"));
+}
+
+void TableDiagram::removeConnection(QGraphicsLineItem* connection) {
+    for (int i = 0; i < relationships.size(); ++i) {
+        if (relationships[i].line == connection) {
+            removeItem(relationships[i].line); // Remove the line from the scene
+            relationships.removeAt(i);        // Remove from the list
+            break;
+        }
+    }
 }

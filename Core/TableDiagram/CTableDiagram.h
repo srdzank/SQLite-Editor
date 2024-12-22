@@ -9,6 +9,7 @@
 #include <QList>
 #include <QString>
 #include <sqlite3.h>
+#include <QMessageBox>
 
 class CustomRectItem : public QGraphicsRectItem {
 public:
@@ -32,9 +33,13 @@ public:
     void loadDatabaseSchema();
     void updateConnections(CustomRectItem* table); // Update connections when table is moved
     QString generateSelectSQL();
+    void removeConnection(QGraphicsLineItem* connection);
+
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+
 
 private:
     sqlite3* m_db;                          // SQLite database handle
