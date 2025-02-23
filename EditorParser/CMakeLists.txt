@@ -5,8 +5,8 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_CXX_STANDARD 14)
 
 # Manually specify the paths to the SQLite3 include directory and library
-set(SQLite3_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/SQLParser/sqlite3/include")
-set(SQLite3_LIBRARIES "${CMAKE_SOURCE_DIR}/SQLParser/sqlite3/lib/sqlite3.lib")
+set(SQLite3_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/EditorParser/sqlite3/include")
+set(SQLite3_LIBRARIES "${CMAKE_SOURCE_DIR}/EditorParser/sqlite3/lib/sqlite3.lib")
 
 
 

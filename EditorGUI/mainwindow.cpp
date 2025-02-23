@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget* parent)
     setWindowTitle("SQLite Editor");
 
     // Set the window icon
-    QIcon appIcon(":/logo.png");
+    QIcon appIcon(":/Res/logo.png");
     setWindowIcon(appIcon);
 
     // Set a background color using stylesheets
@@ -173,27 +173,17 @@ void MainWindow::createToolBar()
     QToolBar* toolBar = addToolBar("Main Toolbar");
 
     // Create an action for the toolbar
-    QAction* customAction = new QAction(QIcon(":/logo.png"), "Custom Button", this);
+    QAction* customAction = new QAction(QIcon(":/Res/logo.png"), "Custom Button", this);
     connect(customAction, &QAction::triggered, this, &MainWindow::onCustomButtonClicked);
 
-    // Add the action to the toolbar
-    //toolBar->addAction(customAction);
-
-    // Create a QLineEdit and add it to the toolbar
-    //QLineEdit* lineEdit = new QLineEdit(this);
-    //lineEdit->setFixedWidth(200);
-    //lineEdit->setPlaceholderText("Enter text...");
-    //connect(lineEdit, &QLineEdit::textChanged, this, &MainWindow::onTextChanged);
-//    toolBar->addWidget(lineEdit);
-
     // Create an action for the toolbar
-    QAction* customAction2 = new QAction(QIcon(":/table_create.png"), "Create Table Dialog", this);
+    QAction* customAction2 = new QAction(QIcon(":/Res/table_create.png"), "Create Table Dialog", this);
     connect(customAction2, &QAction::triggered, this, &MainWindow::onTableCreateDialogClicked);
 
-    QAction* customAction3 = new QAction(QIcon(":/table_edit.png"), "SQL-SELECT-Wizard", this);
+    QAction* customAction3 = new QAction(QIcon(":/Res/table_edit.png"), "SQL-SELECT-Wizard", this);
     connect(customAction3, &QAction::triggered, this, &MainWindow::onTableEditDialogClicked);
 
-    QAction* customAction4 = new QAction(QIcon(":/get_sql.png"), "Get SQL ", this);
+    QAction* customAction4 = new QAction(QIcon(":/Res/get_sql.png"), "Get SQL ", this);
     connect(customAction4, &QAction::triggered, this, &MainWindow::onGetSQLQuery);
 
     // Add the action to the toolbar

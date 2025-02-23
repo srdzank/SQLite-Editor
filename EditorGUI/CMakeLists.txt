@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
-endif()
-
-project(Core VERSION 0.1 LANGUAGES CXX)
+project(EditorGUI VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -13,8 +9,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+# Ensure Qt 6 is detected
+set(Qt6_DIR "D:/Qt/6.8.2/msvc2022_64/lib/cmake/Qt6")
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+# Ensure QT_VERSION_MAJOR is set
+set(QT_VERSION_MAJOR 6)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -23,7 +23,8 @@ set(PROJECT_SOURCES
         mainwindow.ui
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+set(QT_VERSION_MAJOR 6)  # Force define before usage
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
     qt_add_executable(Core
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
@@ -41,42 +42,41 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         TableEditorDialog/CTableEditorDialog.h TableEditorDialog/CTableEditorDialog.cpp
         TableDiagram/CTableDiagram.h TableDiagram/CTableDiagram.cpp
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET Core APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
-        add_library(Core SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+        add_library(Core SHARED ${PROJECT_SOURCES})
     else()
-        add_executable(Core
-            ${PROJECT_SOURCES}
-        )
+        add_executable(Core ${PROJECT_SOURCES})
     endif()
 endif()
 
-
+# Ensure the correct paths are included
 target_include_directories(Core PRIVATE ../SQLParser/include)
 target_link_libraries(Core PRIVATE Qt${QT_VERSION_MAJOR}::Widgets SQLParserLib)
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
+# Fix macOS bundle identifier
+if(QT_VERSION_MAJOR VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.Core)
 endif()
-set_target_properties(Core PROPERTIES
-    ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
 
+if(DEFINED BUNDLE_ID_OPTION)
+    set_target_properties(Core PROPERTIES
+        ${BUNDLE_ID_OPTION}
+        MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+        MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+        MACOSX_BUNDLE TRUE
+        WIN32_EXECUTABLE TRUE
+    )
+else()
+    set_target_properties(Core PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+        MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+        MACOSX_BUNDLE TRUE
+        WIN32_EXECUTABLE TRUE
+    )
+endif()
+
+# Installation settings
 include(GNUInstallDirs)
 install(TARGETS Core
     BUNDLE DESTINATION .
@@ -84,12 +84,12 @@ install(TARGETS Core
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
+# Ensure qt_finalize_executable is called only for Qt 6
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(Core)
 endif()
 
-
-# Set the runtime output directory for the DLL
+# Set runtime output directory
 set_target_properties(Core PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )

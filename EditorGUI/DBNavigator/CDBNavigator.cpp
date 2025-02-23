@@ -7,9 +7,9 @@
 #include <QToolTip>
 
 // Ensure these are paths to your actual icons
-const QString tableIconPath = ":/table.png";
-const QString columnIconPath = ":/column.png";
-const QString indexIconPath = ":/index.png";
+const QString tableIconPath = ":/Res/table.png";
+const QString columnIconPath = ":/Res/column.png";
+const QString indexIconPath = ":/Res/index.png";
 
 CDBNavigator::CDBNavigator(QWidget* parent)
     : QWidget(parent), treeWidget(new QTreeWidget(this))
@@ -109,7 +109,7 @@ void CDBNavigator::populateTreeWidget()
     QIcon tableIcon(tableIconPath);
     QIcon columnIcon(columnIconPath);
     QIcon indexIcon(indexIconPath);
-    QIcon foreignKeyIcon(":/foreign_key.png"); // Replace with your foreign key icon path
+    QIcon foreignKeyIcon(":/Res/foreign_key.png"); // Replace with your foreign key icon path
 
     std::vector<std::string> tables = getTables(db);
     for (const std::string& tableName : tables) {

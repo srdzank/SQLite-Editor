@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Res/column.png</file>
+        <file>Res/foreign_key.png</file>
+        <file>Res/get_sql.png</file>
+        <file>Res/logo.png</file>
+        <file>Res/pic1.png</file>
+        <file>Res/table.png</file>
+        <file>Res/table_create.png</file>
+        <file>Res/table_edit.png</file>
+        <file>Res/Untitled.png</file>
+    </qresource>
+</RCC>
