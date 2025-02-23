@@ -29,14 +29,17 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         resource.qrc
         logger.h logger.cpp
+        AutoComplete/AutoCompleteTextEdit.h AutoComplete/AutoCompleteTextEdit.cpp
+        AutoComplete/SQLHighlighter.h AutoComplete/SQLHighlighter.cpp
+        DBNavigator/CDBNavigator.h DBNavigator/CDBNavigator.cpp
+        ERDiagram/CERDiagram.h ERDiagram/CERDiagram.cpp
+        SQLWorkSpace/CSQLWorkSpace.h SQLWorkSpace/CSQLWorkSpace.cpp
+        TableViewWorkspace/CTableViewWorkspace.h TableViewWorkspace/CTableViewWorkspace.cpp
         TimeLineWidget/customwidget.h TimeLineWidget/customwidget.cpp
         TimeLineWidget/customitemdelegate.h TimeLineWidget/customitemdelegate.cpp
         Video/QVideo.h Video/QVideo.cpp 
-        DBNavigator/CDBNavigator.h DBNavigator/CDBNavigator.cpp
-        SQLWorkSpace/CSQLWorkSpace.h SQLWorkSpace/CSQLWorkSpace.cpp
-        TableViewWorkspace/CTableViewWorkspace.h TableViewWorkspace/CTableViewWorkspace.cpp
-        AutoComplete/AutoCompleteTextEdit.h AutoComplete/AutoCompleteTextEdit.cpp
-        AutoComplete/SQLHighlighter.h AutoComplete/SQLHighlighter.cpp
+        TableEditorDialog/CTableEditorDialog.h TableEditorDialog/CTableEditorDialog.cpp
+        TableDiagram/CTableDiagram.h TableDiagram/CTableDiagram.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Core APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
