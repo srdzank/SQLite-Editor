@@ -41,6 +41,7 @@ if(QT_VERSION_MAJOR GREATER_EQUAL 6)
         Video/QVideo.h Video/QVideo.cpp 
         TableEditorDialog/CTableEditorDialog.h TableEditorDialog/CTableEditorDialog.cpp
         TableDiagram/CTableDiagram.h TableDiagram/CTableDiagram.cpp
+        SettingsDialog/CSettingsDialog.h SettingsDialog/CSettingsDialog.cpp
     )
 else()
     if(ANDROID)

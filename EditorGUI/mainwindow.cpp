@@ -9,9 +9,10 @@
 #include <QStringListModel>
 #include <QCompleter>
 #include <QHBoxLayout>
+#include <QApplication>
 #include <iostream>
-#include "SQLParserAPI.h"  // Include your SQL parser API implementation
-#include "SQLWorkSpace/CSQLWorkSpace.h"  // Include the custom CSQLWorkSpace header
+#include "SQLParserAPI.h"
+#include "SQLWorkSpace/CSQLWorkSpace.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -21,6 +22,8 @@ MainWindow::MainWindow(QWidget* parent)
     m_db = nullptr;
     erDiagram = nullptr;
     tableDiagram = nullptr;
+    view = nullptr;
+
     ui->setupUi(this);
     resize(1024, 768);
     setWindowTitle("SQLite Editor");
@@ -44,10 +47,10 @@ MainWindow::MainWindow(QWidget* parent)
     layout = new QVBoxLayout(centralWidget);
 
     splitter = new QSplitter(Qt::Vertical, this);
-    customWidget = new CSQLWorkSpace(this);  // Use the custom CSQLWorkSpace
+    customWidget = new CSQLWorkSpace(this);
     tableViewWidget = new CTableViewWorkspace(this);
 
-    splitter->addWidget(customWidget);  // Add the CSQLWorkSpace to the splitter
+    splitter->addWidget(customWidget);
     splitter->addWidget(tableViewWidget);
 
     layout->addWidget(splitter);
@@ -65,7 +68,6 @@ MainWindow::MainWindow(QWidget* parent)
     connect(customWidget, SIGNAL(executeSQL(const QString&)), this, SLOT(onExecuteSQL(const QString&)));
     connect(customWidget, SIGNAL(clearSQL()), this, SLOT(onClearSQL()));
     connect(customWidget, SIGNAL(erDiagram()), this, SLOT(erDiagramProc()));
-   
 
     // Create the completer
     completerModel = new QStringListModel(this);
@@ -74,7 +76,7 @@ MainWindow::MainWindow(QWidget* parent)
     completer->setCompletionMode(QCompleter::PopupCompletion);
     customWidget->sqlInput->setCompleter(completer);
 
-    connect(customWidget->sqlInput, &QTextEdit::textChanged, this, &MainWindow::onSQLTextChanged);  // Connect text changed signal
+    connect(customWidget->sqlInput, &QTextEdit::textChanged, this, &MainWindow::onSQLTextChanged);
 
     updateCompleterModel();
 
@@ -83,15 +85,12 @@ MainWindow::MainWindow(QWidget* parent)
     this->statusBar()->setStyleSheet("QStatusBar { background-color: #767676; color: white; }");
 }
 
-
-
 MainWindow::~MainWindow()
 {
     // Close the database
     closeDatabase(m_db);
     delete ui;
 }
-
 
 void MainWindow::CreateMenu()
 {
@@ -111,24 +110,26 @@ void MainWindow::CreateMenu()
     // Create actions for the file menu
     QAction* newDatabaseAction = new QAction("New Database", this);
     QAction* openAction = new QAction("Open Database", this);
+    QAction* settingsAction = new QAction("Settings", this);
     QAction* exitAction = new QAction("Exit", this);
 
     // Add actions to the file menu
     fileMenu->addAction(newDatabaseAction);
     fileMenu->addAction(openAction);
+    fileMenu->addAction(settingsAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
     connect(newDatabaseAction, &QAction::triggered, this, &MainWindow::onNewDatabase);
     connect(exitAction, &QAction::triggered, this, &MainWindow::onActionExit);
     connect(openAction, &QAction::triggered, this, &MainWindow::onActionOpen);
+    connect(settingsAction, &QAction::triggered, this, &MainWindow::onSettingsClicked);
 
     LOG("Main Menu is created");
 }
 
 void MainWindow::onNewDatabase()
 {
-    // Open a dialog to enter the name and location for the new database
     QString fileName = QFileDialog::getSaveFileName(this, tr("Create New SQLite Database"),
         "", tr("SQLite Database Files (*.sqlite *.db)"));
 
@@ -137,7 +138,6 @@ void MainWindow::onNewDatabase()
         return;
     }
 
-    // Attempt to create the database
     sqlite3* newDb;
     int result = sqlite3_open(fileName.toUtf8().constData(), &newDb);
 
@@ -147,16 +147,22 @@ void MainWindow::onNewDatabase()
         return;
     }
 
-    // Close any previously opened database
     if (m_db) {
+        if (erDiagram) {
+            delete erDiagram;
+            erDiagram = nullptr;
+        }
+        if (view) {
+            delete view;
+            view = nullptr;
+            tableDiagram = nullptr;
+        }
         closeDatabase(m_db);
     }
 
-    // Update the current database
     m_db = newDb;
     QMessageBox::information(this, "Success", "Database created successfully.");
 
-    // Refresh the database navigator
     navigator->openDatabase(m_db);
     if (erDiagram == nullptr) {
         erDiagram = new ERDiagram(m_db, this);
@@ -166,17 +172,13 @@ void MainWindow::onNewDatabase()
     }
 }
 
-
 void MainWindow::createToolBar()
 {
-    // Create a toolbar
     QToolBar* toolBar = addToolBar("Main Toolbar");
 
-    // Create an action for the toolbar
     QAction* customAction = new QAction(QIcon(":/Res/logo.png"), "Custom Button", this);
     connect(customAction, &QAction::triggered, this, &MainWindow::onCustomButtonClicked);
 
-    // Create an action for the toolbar
     QAction* customAction2 = new QAction(QIcon(":/Res/table_create.png"), "Create Table Dialog", this);
     connect(customAction2, &QAction::triggered, this, &MainWindow::onTableCreateDialogClicked);
 
@@ -186,12 +188,16 @@ void MainWindow::createToolBar()
     QAction* customAction4 = new QAction(QIcon(":/Res/get_sql.png"), "Get SQL ", this);
     connect(customAction4, &QAction::triggered, this, &MainWindow::onGetSQLQuery);
 
-    // Add the action to the toolbar
+    QAction* settingsAction = new QAction("Settings", this);
+    connect(settingsAction, &QAction::triggered, this, &MainWindow::onSettingsClicked);
+
     toolBar->addAction(customAction2);
     toolBar->addAction(customAction3);
     toolBar->addAction(customAction4);
+    toolBar->addAction(settingsAction);
 
-    addToolBar(Qt::BottomToolBarArea, toolBar);
+    // Поставување на Toolbar-от горе
+    addToolBar(Qt::TopToolBarArea, toolBar);
 
     LOG("Main ToolBar is created");
 }
@@ -203,15 +209,12 @@ void MainWindow::updateLastOpenedFileName(const QString& fileName)
     QMenu* fileMenu = menuBar->findChild<QMenu*>("File");
 
     if (fileMenu) {
-        // Check if there is already an action for the last opened file
         QAction* lastOpenedFileAction = fileMenu->findChild<QAction*>("lastOpenedFileAction");
 
         if (lastOpenedFileAction) {
-            // Update the existing action
             lastOpenedFileAction->setText("Last Opened: " + lastOpenedFileName);
         }
         else {
-            // Create a new action for the last opened file
             lastOpenedFileAction = new QAction("Last Opened: " + lastOpenedFileName, this);
             lastOpenedFileAction->setObjectName("lastOpenedFileAction");
             fileMenu->addAction(lastOpenedFileAction);
@@ -224,7 +227,6 @@ void MainWindow::updateCompleterModel()
     QString sqlText = customWidget->sqlInput->toPlainText();
     size_t cursorPosition = customWidget->sqlInput->textCursor().position();
 
-    // Use c_str() to convert std::string to const char*
     void* suggestionsHandle = getSuggestions(sqlText.toStdString().c_str(), cursorPosition, m_db);
     if (!suggestionsHandle) {
         return;
@@ -237,7 +239,6 @@ void MainWindow::updateCompleterModel()
     }
     completerModel->setStringList(suggestionList);
 
-    // Free the suggestions handle
     freeSuggestions(suggestionsHandle);
 }
 
@@ -262,7 +263,15 @@ void MainWindow::onActionOpen()
 {
     LOG("File is open");
     if (m_db) {
-        delete erDiagram;
+        if (erDiagram) {
+            delete erDiagram;
+            erDiagram = nullptr;
+        }
+        if (view) {
+            delete view;
+            view = nullptr;
+            tableDiagram = nullptr;
+        }
         closeDatabase(m_db);
     }
 
@@ -276,22 +285,18 @@ void MainWindow::onActionOpen()
 
         if (openDatabase(filename, &m_db) != SQLITE_OK) {
             std::cerr << "Can't open database: " << sqlite3_errmsg(m_db) << std::endl;
-
             return;
         }
         navigator->openDatabase(m_db);
-        QString sql = "SELECT * FROM users;";
 
-        updateLastOpenedFileName(fileName); // Add this line to update the menu
-        // Inside your main window or a dedicated widget
-        
+        updateLastOpenedFileName(fileName);
+
         erDiagram = new ERDiagram(m_db, this);
         erDiagram->generateDiagram();
         erDiagram->hide();
         layout->addWidget(erDiagram);
     }
 }
-
 
 void MainWindow::executeSQLCommand(sqlite3* db, const QString& eSql) {
     customWidget->errorLabel->hide();
@@ -325,10 +330,8 @@ void MainWindow::executeSQLCommand(sqlite3* db, const QString& eSql) {
 
     sqlite3_finalize(stmt);
 
-    // Print the results
     printResults(resultData, columnNames);
 }
-
 
 void MainWindow::procClickedTableItem(const QString& table) {
     m_table = table;
@@ -340,11 +343,15 @@ void MainWindow::procClickedTableItem(const QString& table) {
 
 void MainWindow::onExecuteSQL(const QString& query)
 {
-    executeSQLCommand(m_db, query);  // Assuming table name is "results"
-    if (tableDiagram != nullptr) {
-        delete tableDiagram;
-        tableDiagram = nullptr;
+    executeSQLCommand(m_db, query);
+
+    if (view != nullptr) {
         delete view;
+        view = nullptr;
+        tableDiagram = nullptr;
+        if (splitter) {
+            splitter->show();
+        }
     }
 }
 
@@ -352,7 +359,6 @@ void MainWindow::onClearSQL()
 {
     customWidget->sqlInput->clear();
 }
-
 
 void MainWindow::erDiagramProc()
 {
@@ -364,7 +370,7 @@ void MainWindow::erDiagramProc()
     }
     else {
         delete erDiagram;
-        if(m_db){
+        if (m_db) {
             erDiagram = new ERDiagram(m_db, this);
             erDiagram->generateDiagram();
             erDiagram->show();
@@ -377,41 +383,94 @@ void MainWindow::erDiagramProc()
 void MainWindow::onCustomButtonClicked()
 {
     LOG("onCustomButtonClicked is clicked");
-
 }
-
 
 void MainWindow::onTableCreateDialogClicked()
 {
     LOG("onCustomButtonClicked is clicked");
-    CTableManagerDialog  dialog(m_db, this); // Pass the SQLite handle
+    CTableManagerDialog dialog(m_db, this);
     dialog.exec();
     navigator->openDatabase(m_db);
 }
 
 void MainWindow::onTableEditDialogClicked()
 {
-    LOG("onCustomButtonClicked is clicked");
+    LOG("SQL-SELECT-Wizard action triggered");
+
+    if (view != nullptr) {
+        if (view->isVisible()) {
+            view->hide();
+            if (splitter) {
+                splitter->show();
+            }
+        }
+        else {
+            if (splitter) {
+                splitter->hide();
+            }
+            view->show();
+        }
+        return;
+    }
+
+    if (!m_db) {
+        QMessageBox::warning(this, "Warning", "No database opened.");
+        return;
+    }
+
     tableDiagram = new TableDiagram(m_db, this);
     tableDiagram->loadDatabaseSchema();
-    // Add to your layout
-    view = new QGraphicsView(tableDiagram);
-    view->show();
-    layout->addWidget(view);
 
+    view = new QGraphicsView(tableDiagram, this);
+
+    if (splitter) {
+        splitter->hide();
+    }
+
+    layout->addWidget(view);
+    view->show();
 }
 
 void MainWindow::onGetSQLQuery()
 {
-    if (tableDiagram != nullptr){
+    if (tableDiagram != nullptr) {
         QString sqlString = tableDiagram->generateSelectSQL();
         customWidget->sqlInput->setPlainText(sqlString);
+
+        if (view != nullptr && view->isVisible()) {
+            view->hide();
+            if (splitter) {
+                splitter->show();
+            }
+        }
     }
 }
 
+void MainWindow::onSettingsClicked()
+{
+    CSettingsDialog dlg(qApp->font(), this);
+    if (dlg.exec() == QDialog::Accepted) {
+        QFont newFont = dlg.getSelectedFont();
+
+        // 1. Постави глобален фонт
+        qApp->setFont(newFont);
+
+        // 2. Примени го експлицитно на сите виџети кои се веќе креирани
+        const auto allWidgets = qApp->allWidgets();
+        for (QWidget* w : allWidgets) {
+            w->setFont(newFont);
+            w->update();
+        }
+
+        // 3. Доколку користиш специфичен stylesheet во main.cpp или customWidget (QTextEdit)
+        // исто така осигури се дека и текстот во SQL Input-от се ажурира
+        if (customWidget && customWidget->sqlInput) {
+            customWidget->sqlInput->setFont(newFont);
+        }
+    }
+}
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-
     QMainWindow::resizeEvent(event);
 }
