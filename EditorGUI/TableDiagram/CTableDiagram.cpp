@@ -308,9 +308,8 @@ QString TableDiagram::generateSelectSQL() {
         return "No relationships defined for generating SQL.";
     }
 
-    QStringList selectFields;  // Columns to SELECT
-    QStringList joinClauses;   // JOIN statements
-    QSet<QString> processedJoins; // Track processed JOIN pairs
+    QStringList joinClauses;      // JOIN statements
+    QSet<QString> processedJoins;  // Track processed JOIN pairs
     QSet<QString> processedTables; // Track processed tables
     QString baseTable;
 
@@ -328,17 +327,6 @@ QString TableDiagram::generateSelectSQL() {
         // Ensure columns are valid
         if (startTable.isEmpty() || startColumn.isEmpty() || endTable.isEmpty() || endColumn.isEmpty()) {
             continue;
-        }
-
-        // Add fields to SELECT clause
-        QString startField = QString("%1.%2").arg(startTable, startColumn);
-        QString endField = QString("%1.%2").arg(endTable, endColumn);
-
-        if (!selectFields.contains(startField)) {
-            selectFields.append(startField);
-        }
-        if (!selectFields.contains(endField)) {
-            selectFields.append(endField);
         }
 
         // Set the base table (only once)
@@ -364,13 +352,15 @@ QString TableDiagram::generateSelectSQL() {
         }
     }
 
-    // Construct the final SQL query
-    return QString("SELECT %1\nFROM %2\n%3;")
-        .arg(selectFields.join(", "))
+    if (baseTable.isEmpty()) {
+        return "SELECT *;";
+    }
+
+    // Construct the final SQL query using SELECT *
+    return QString("SELECT *\nFROM %1\n%2;")
         .arg(baseTable)
         .arg(joinClauses.join("\n"));
 }
-
 void TableDiagram::removeConnection(QGraphicsLineItem* connection) {
     for (int i = 0; i < relationships.size(); ++i) {
         if (relationships[i].line == connection) {

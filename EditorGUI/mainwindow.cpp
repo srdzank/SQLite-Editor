@@ -188,13 +188,13 @@ void MainWindow::createToolBar()
     QAction* customAction4 = new QAction(QIcon(":/Res/get_sql.png"), "Get SQL ", this);
     connect(customAction4, &QAction::triggered, this, &MainWindow::onGetSQLQuery);
 
-    QAction* settingsAction = new QAction("Settings", this);
-    connect(settingsAction, &QAction::triggered, this, &MainWindow::onSettingsClicked);
+    //QAction* settingsAction = new QAction("Settings", this);
+    //connect(settingsAction, &QAction::triggered, this, &MainWindow::onSettingsClicked);
 
     toolBar->addAction(customAction2);
     toolBar->addAction(customAction3);
     toolBar->addAction(customAction4);
-    toolBar->addAction(settingsAction);
+    //toolBar->addAction(settingsAction);
 
     // Поставување на Toolbar-от горе
     addToolBar(Qt::TopToolBarArea, toolBar);
