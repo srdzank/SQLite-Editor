@@ -80,5 +80,3 @@ For any inquiries or feedback, please contact us at [srdzan.kostenarov@gmail.com
 ### Support My Project
 If you find my work helpful, consider donating to support my project!
 
-#### Donate via PayPal
-[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue)](https://www.paypal.com/ncp/payment/B4SF59QZYSZRQ)
