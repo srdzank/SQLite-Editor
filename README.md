@@ -1,7 +1,19 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/total)
 ![GitHub latest release](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/latest/total)
+# SQLite-Editor
 
-# SQLite Editor
+Official home of SQLite-Editor — a lightweight, fast, and native SQLite database browser built with C++ and Qt 6.
+
+## 📥 Download & Installation
+
+* **Microsoft Store:** Get automatic background updates, easy setup, and support the ongoing development.
+  
+  <a href="https://apps.microsoft.com/store/detail/9NRD3HMXZW41">
+    <img src="https://get.microsoft.com/images/en-us%20dark.svg" width="160" alt="Get it from Microsoft" />
+  </a>
+
+* **Direct Download (Free):** Download the standalone portable `.zip` or `.exe` from the [GitHub Releases](https://github.com/srdzank/SQLite-Editor/releases) page.
+* 
 
 ## Introduction
 
