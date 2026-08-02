@@ -1,0 +1,22 @@
+{
+	"BUILD_DIR" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen",
+	"CMAKE_BINARY_DIR" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release",
+	"CMAKE_CURRENT_BINARY_DIR" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release",
+	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Users/PC/Downloads/files3",
+	"CMAKE_SOURCE_DIR" : "C:/Users/PC/Downloads/files3",
+	"CROSS_CONFIG" : false,
+	"GENERATOR" : "Ninja",
+	"INCLUDE_DIR" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen/include",
+	"INPUTS" : [ "C:/Users/PC/Downloads/files3/resources/app_icon.png" ],
+	"LOCK_FILE" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/sqlite_visual_editor_autogen.dir/AutoRcc_app_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "--no-zstd", "-name", "app" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_app.cpp",
+	"RCC_EXECUTABLE" : "C:/Qt/6.10.0/msvc2022_64/bin/rcc.exe",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/sqlite_visual_editor_autogen.dir/AutoRcc_app_EWIEGA46WW_Used.txt",
+	"SOURCE" : "C:/Users/PC/Downloads/files3/app.qrc",
+	"USE_BETTER_GRAPH" : true,
+	"VERBOSITY" : 0
+}
