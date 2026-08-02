@@ -1,18 +1,18 @@
 {
 	"AUTOGEN_COMMAND_LINE_LENGTH_MAX" : 32000,
-	"BUILD_DIR" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen",
-	"CMAKE_BINARY_DIR" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release",
-	"CMAKE_CURRENT_BINARY_DIR" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release",
-	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Users/PC/Downloads/files3",
+	"BUILD_DIR" : "C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen",
+	"CMAKE_BINARY_DIR" : "C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release",
+	"CMAKE_CURRENT_BINARY_DIR" : "C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release",
+	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Users/PC/Documents/GitHub/SQLite-Editor",
 	"CMAKE_EXECUTABLE" : "C:/Qt/Tools/CMake_64/bin/cmake.exe",
 	"CMAKE_LIST_FILES" : 
 	[
-		"C:/Users/PC/Downloads/files3/CMakeLists.txt",
-		"C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/.qtcreator/cmake-helper/qtcreator-project.cmake",
+		"C:/Users/PC/Documents/GitHub/SQLite-Editor/CMakeLists.txt",
+		"C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/.qtcreator/cmake-helper/qtcreator-project.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeDetermineSystem.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystem.cmake.in",
-		"C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/3.30.5/CMakeSystem.cmake",
-		"C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/.qtcreator/cmake-helper/maintenance_tool_provider.cmake",
+		"C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/3.30.5/CMakeSystem.cmake",
+		"C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/.qtcreator/cmake-helper/maintenance_tool_provider.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystemSpecificInitialize.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-Initialize.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeDetermineCXXCompiler.cmake",
@@ -64,7 +64,7 @@
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Compiler/IBMCPP-CXX-DetermineVersionInternal.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindBinUtils.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCXXCompiler.cmake.in",
-		"C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
+		"C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystemSpecificInformation.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeGenericSystem.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeInitializeConfigs.cmake",
@@ -79,7 +79,7 @@
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-MSVC.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeDetermineRCCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeRCCompiler.cmake.in",
-		"C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/3.30.5/CMakeRCCompiler.cmake",
+		"C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/3.30.5/CMakeRCCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeRCInformation.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeTestRCCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCommonLanguageInclude.cmake",
@@ -96,7 +96,7 @@
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Internal/FeatureTesting.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Compiler/MSVC-CXX-CXXImportStd.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCXXCompiler.cmake.in",
-		"C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
+		"C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
 		"C:/Qt/6.10.0/msvc2022_64/lib/cmake/Qt6Core/Qt6CoreConfigVersion.cmake",
 		"C:/Qt/6.10.0/msvc2022_64/lib/cmake/Qt6Core/Qt6CoreConfigVersionImpl.cmake",
 		"C:/Qt/6.10.0/msvc2022_64/lib/cmake/Qt6Core/Qt6CoreConfig.cmake",
@@ -480,90 +480,90 @@
 		"C:/Qt/6.10.0/msvc2022_64/lib/cmake/Qt6/QtPublicWindowsHelpers.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
 		"C:/Qt/6.10.0/msvc2022_64/lib/cmake/Qt6/Qt6Dependencies.cmake",
-		"C:/Users/PC/Downloads/files3/app.qrc"
+		"C:/Users/PC/Documents/GitHub/SQLite-Editor/app.qrc"
 	],
-	"CMAKE_SOURCE_DIR" : "C:/Users/PC/Downloads/files3",
+	"CMAKE_SOURCE_DIR" : "C:/Users/PC/Documents/GitHub/SQLite-Editor",
 	"CROSS_CONFIG" : false,
-	"DEP_FILE" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen/deps",
+	"DEP_FILE" : "C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen/deps",
 	"DEP_FILE_RULE_NAME" : "sqlite_visual_editor_autogen/timestamp",
 	"HEADERS" : 
 	[
 		[
-			"C:/Users/PC/Downloads/files3/CreateIndexDialog.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/CreateIndexDialog.h",
 			"Mu",
 			"EWIEGA46WW/moc_CreateIndexDialog.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/CreateTableDialog.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/CreateTableDialog.h",
 			"Mu",
 			"EWIEGA46WW/moc_CreateTableDialog.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/DiagramView.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/DiagramView.h",
 			"Mu",
 			"EWIEGA46WW/moc_DiagramView.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/ExportDialog.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/ExportDialog.h",
 			"Mu",
 			"EWIEGA46WW/moc_ExportDialog.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/InsertRowDialog.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/InsertRowDialog.h",
 			"Mu",
 			"EWIEGA46WW/moc_InsertRowDialog.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/MainWindow.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/MainWindow.h",
 			"Mu",
 			"EWIEGA46WW/moc_MainWindow.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/QueryModel.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/QueryModel.h",
 			"Mu",
 			"EWIEGA46WW/moc_QueryModel.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/QueryWorker.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/QueryWorker.h",
 			"Mu",
 			"EWIEGA46WW/moc_QueryWorker.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/Schema.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/Schema.h",
 			"Mu",
 			"EWIEGA46WW/moc_Schema.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/SettingsDialog.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/SettingsDialog.h",
 			"Mu",
 			"EWIEGA46WW/moc_SettingsDialog.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/SqlEditor.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/SqlEditor.h",
 			"Mu",
 			"EWIEGA46WW/moc_SqlEditor.cpp",
 			null
 		],
 		[
-			"C:/Users/PC/Downloads/files3/TableNode.h",
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/TableNode.h",
 			"Mu",
 			"EWIEGA46WW/moc_TableNode.cpp",
 			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
-	"INCLUDE_DIR" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen/include",
-	"MOC_COMPILATION_FILE" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen/mocs_compilation.cpp",
+	"INCLUDE_DIR" : "C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen/include",
+	"MOC_COMPILATION_FILE" : "C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/sqlite_visual_editor_autogen/mocs_compilation.cpp",
 	"MOC_DEFINITIONS" : 
 	[
 		"QT_CORE_LIB",
@@ -587,7 +587,7 @@
 	],
 	"MOC_INCLUDES" : 
 	[
-		"C:/Users/PC/Downloads/files3",
+		"C:/Users/PC/Documents/GitHub/SQLite-Editor",
 		"C:/Qt/6.10.0/msvc2022_64/include/QtCore",
 		"C:/Qt/6.10.0/msvc2022_64/include",
 		"C:/Qt/6.10.0/msvc2022_64/mkspecs/win32-msvc",
@@ -612,27 +612,71 @@
 	"MOC_SKIP" : [],
 	"MULTI_CONFIG" : false,
 	"PARALLEL" : 16,
-	"PARSE_CACHE_FILE" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/sqlite_visual_editor_autogen.dir/ParseCache.txt",
+	"PARSE_CACHE_FILE" : "C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/sqlite_visual_editor_autogen.dir/ParseCache.txt",
 	"QT_MOC_EXECUTABLE" : "C:/Qt/6.10.0/msvc2022_64/bin/moc.exe",
 	"QT_UIC_EXECUTABLE" : "",
 	"QT_VERSION_MAJOR" : 6,
 	"QT_VERSION_MINOR" : 10,
-	"SETTINGS_FILE" : "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/sqlite_visual_editor_autogen.dir/AutogenUsed.txt",
+	"SETTINGS_FILE" : "C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/CMakeFiles/sqlite_visual_editor_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
-		[ "C:/Users/PC/Downloads/files3/CreateIndexDialog.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/CreateTableDialog.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/DiagramView.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/ExportDialog.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/InsertRowDialog.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/MainWindow.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/QueryModel.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/QueryWorker.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/Schema.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/SettingsDialog.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/SqlEditor.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/TableNode.cpp", "Mu", null ],
-		[ "C:/Users/PC/Downloads/files3/main.cpp", "Mu", null ]
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/CreateIndexDialog.cpp",
+			"Mu",
+			null
+		],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/CreateTableDialog.cpp",
+			"Mu",
+			null
+		],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/DiagramView.cpp",
+			"Mu",
+			null
+		],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/ExportDialog.cpp",
+			"Mu",
+			null
+		],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/InsertRowDialog.cpp",
+			"Mu",
+			null
+		],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/MainWindow.cpp",
+			"Mu",
+			null
+		],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/QueryModel.cpp",
+			"Mu",
+			null
+		],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/QueryWorker.cpp",
+			"Mu",
+			null
+		],
+		[ "C:/Users/PC/Documents/GitHub/SQLite-Editor/Schema.cpp", "Mu", null ],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/SettingsDialog.cpp",
+			"Mu",
+			null
+		],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/SqlEditor.cpp",
+			"Mu",
+			null
+		],
+		[
+			"C:/Users/PC/Documents/GitHub/SQLite-Editor/TableNode.cpp",
+			"Mu",
+			null
+		],
+		[ "C:/Users/PC/Documents/GitHub/SQLite-Editor/main.cpp", "Mu", null ]
 	],
 	"USE_BETTER_GRAPH" : true,
 	"VERBOSITY" : 0

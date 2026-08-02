@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/PC/Downloads/files3
+# Install script for directory: C:/Users/PC/Documents/GitHub/SQLite-Editor
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -47,6 +47,6 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-  file(WRITE "C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "C:/Users/PC/Documents/GitHub/SQLite-Editor/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Release/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

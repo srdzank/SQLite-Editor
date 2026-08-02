@@ -1,5 +1,0 @@
-C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Debug/CMakeFiles/sqlite_visual_editor.dir
-C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Debug/CMakeFiles/edit_cache.dir
-C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Debug/CMakeFiles/rebuild_cache.dir
-C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Debug/CMakeFiles/sqlite_visual_editor_autogen_timestamp_deps.dir
-C:/Users/PC/Downloads/files3/build/Desktop_Qt_6_10_0_MSVC2022_64bit_Debug/CMakeFiles/sqlite_visual_editor_autogen.dir

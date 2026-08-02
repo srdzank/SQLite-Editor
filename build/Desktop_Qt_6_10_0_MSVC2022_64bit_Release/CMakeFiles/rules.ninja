@@ -57,7 +57,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\Qt\Tools\CMake_64\bin\cmake.exe --regenerate-during-build -SC:\Users\PC\Downloads\files3 -BC:\Users\PC\Downloads\files3\build\Desktop_Qt_6_10_0_MSVC2022_64bit_Release
+  command = C:\Qt\Tools\CMake_64\bin\cmake.exe --regenerate-during-build -SC:\Users\PC\Documents\GitHub\SQLite-Editor -BC:\Users\PC\Documents\GitHub\SQLite-Editor\build\Desktop_Qt_6_10_0_MSVC2022_64bit_Release
   description = Re-running CMake...
   generator = 1
 
