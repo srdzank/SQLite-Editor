@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🗄️ SQLite Editor
+# 🗄️ WinSQLite Editor
 
 **A lightweight, lightning-fast, and native SQLite database browser built with C++ and Qt 6.**
 
