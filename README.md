@@ -85,3 +85,5 @@ cmake -B build -DCMAKE_PREFIX_PATH="C:/Qt/6.x/msvc2019_64"
 
 # 3. Build the project
 cmake --build build --config Release
+
+
