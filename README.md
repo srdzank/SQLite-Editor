@@ -28,7 +28,7 @@
 ### Option 1: Microsoft Store (Recommended)
 Get automatic background updates, easy one-click installation, and support the ongoing development of the project.
 
-<a href="https://apps.microsoft.com/store/detail/9NRD3HMXZW41">
+<a href="https://apps.microsoft.com/store/detail/9NRD3HMXZW41" target="_blank">
   <img src="https://get.microsoft.com/images/en-us%20dark.svg" width="180" alt="Get it from Microsoft" />
 </a>
 
@@ -85,5 +85,3 @@ cmake -B build -DCMAKE_PREFIX_PATH="C:/Qt/6.x/msvc2019_64"
 
 # 3. Build the project
 cmake --build build --config Release
-
-
