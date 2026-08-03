@@ -7,11 +7,11 @@
 [![GitHub Release](https://img.shields.io/github/v/release/srdzank/SQLite-Editor?style=for-the-badge&color=0078D6)](https://github.com/srdzank/SQLite-Editor/releases/latest)
 [![Total Downloads](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/total?style=for-the-badge&color=28a745)](https://github.com/srdzank/SQLite-Editor/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows)](https://apps.microsoft.com/store/detail/9NRD3HMXZW41)
+[![Platform](https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows)](https://apps.microsoft.com/detail/9NRD3HMXZW41)
 
 <br />
 
-[**Download on Microsoft Store**](https://apps.microsoft.com/store/detail/9NRD3HMXZW41) • [**GitHub Releases**](https://github.com/srdzank/SQLite-Editor/releases) • [**Watch Demo**](#-video-demonstration)
+[**Download on Microsoft Store**](https://apps.microsoft.com/detail/9NRD3HMXZW41) • [**GitHub Releases**](https://github.com/srdzank/SQLite-Editor/releases) • [**Watch Demo**](#-video-demonstration)
 
 </div>
 
@@ -28,7 +28,7 @@
 ### Option 1: Microsoft Store (Recommended)
 Get automatic background updates, easy one-click installation, and support the ongoing development of the project.
 
-<a href="https://apps.microsoft.com/store/detail/9NRD3HMXZW41" target="_blank">
+<a href="https://apps.microsoft.com/detail/9NRD3HMXZW41" target="_blank" rel="noopener noreferrer">
   <img src="https://get.microsoft.com/images/en-us%20dark.svg" width="180" alt="Get it from Microsoft" />
 </a>
 
