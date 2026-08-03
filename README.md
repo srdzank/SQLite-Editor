@@ -1,95 +1,75 @@
-![GitHub all releases](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/total)
-![GitHub latest release](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/latest/total)
-# SQLite-Editor
+<div align="center">
 
-Official home of SQLite-Editor — a lightweight, fast, and native SQLite database browser built with C++ and Qt 6.
+# 🗄️ WinSQLite Editor
+
+**A lightweight, lightning-fast, and native SQLite database browser built with C++ and Qt 6.**
+
+[![GitHub Release](https://img.shields.io/github/v/release/srdzank/SQLite-Editor?style=for-the-badge&color=0078D6)](https://github.com/srdzank/SQLite-Editor/releases/latest)
+[![Total Downloads](https://img.shields.io/github/downloads/srdzank/SQLite-Editor/total?style=for-the-badge&color=28a745)](https://github.com/srdzank/SQLite-Editor/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows)](https://apps.microsoft.com/detail/9NRD3HMXZW41)
+
+<br />
+
+[**Download on Microsoft Store**](https://apps.microsoft.com/detail/9NRD3HMXZW41) • [**GitHub Releases**](https://github.com/srdzank/SQLite-Editor/releases) • [**Watch Demo**](#-video-demonstration)
+
+</div>
+
+---
+
+## 🌟 Overview
+
+**WinSQLite Editor** is a high-performance desktop application designed for seamless SQLite database administration. Built natively with C++ and Qt 6, it delivers an ultra-responsive user experience with instant startup times, low memory consumption, and smooth handling of large database files.
+
+---
 
 ## 📥 Download & Installation
 
-* **Microsoft Store:** Get automatic background updates, easy setup, and support the ongoing development.
-  
-  <a href="https://apps.microsoft.com/store/detail/9NRD3HMXZW41">
-    <img src="https://get.microsoft.com/images/en-us%20dark.svg" width="160" alt="Get it from Microsoft" />
-  </a>
+### Option 1: Microsoft Store (Recommended)
+Get automatic background updates, easy one-click installation, and support the ongoing development of the project.
 
-* **Direct Download (Free):** Download the standalone portable `.zip` or `.exe` from the [GitHub Releases](https://github.com/srdzank/SQLite-Editor/releases) page.
-* 
+<a href="https://apps.microsoft.com/detail/9NRD3HMXZW41" target="_blank" rel="noopener noreferrer">
+  <img src="https://get.microsoft.com/images/en-us%20dark.svg" width="180" alt="Get it from Microsoft" />
+</a>
 
-## Introduction
+### Option 2: Direct Download (Portable)
+Download the standalone `.zip` or `.exe` directly from our [GitHub Releases](https://github.com/srdzank/SQLite-Editor/releases) page. No installer required.
 
-SQLite Editor is a powerful and efficient tool designed to manage and edit SQLite databases with ease. It allows users to open databases, read the structure of all tables, indexes, and table field data. The editor includes a feature-rich SQL editor equipped with autocomplete and syntax highlighting tools to streamline the creation of SQL statements. The application is optimized for speed, ensuring a responsive experience even with large databases.
+---
 
-## Features
+## ✨ Key Features
 
-- **Open and Manage SQLite Databases:** Easily open and explore SQLite databases.
-- **View Database Structure:** Inspect the structure of all tables, indexes, and table field data.
-- **SQL Editor:** Create and execute SQL statements with an integrated editor.
-- **Autocomplete:** Enhanced productivity with SQL statement autocomplete.
-- **Syntax Highlighting:** Clear and readable SQL statements with syntax highlighting.
-- **High Performance:** Fast and responsive interface for efficient database management.
+* **📂 Database Management:** Seamlessly open, inspect, and manage SQLite database schemas, tables, fields, and indices.
+* **📝 Smart SQL Editor:** Built-in code editor equipped with **syntax highlighting** and **context-aware autocomplete** for rapid SQL drafting.
+* **⚡ Ultra Fast & Native:** Engineered with **C++** and **Qt 6** to ensure minimal resource overhead and rapid query execution.
+* **🔍 Visual Data Browser:** View, edit, and filter table data intuitively without manual queries.
+* **🔒 Privacy-First:** 100% offline-first desktop tool with zero telemetry or tracking.
 
-## Screenshot
+---
 
-![App Screenshot](screenshot1.png)
-![App Screenshot](screenshot2.png)
+## 📸 Screenshots
 
-## Video Demonstration
+| Table & Schema Inspection | SQL Query Execution |
+| :---: | :---: |
+| ![App Screenshot](screenshot1.png) | ![App Screenshot](screenshot2.png) |
 
-Watch a video demonstration of SQLite Editor on [YouTube](https://www.youtube.com/watch?v=5Dnb0bvK24o).
+---
 
-[![Watch the video](https://img.youtube.com/vi/V9hBwAUSgh0/0.jpg)](https://www.youtube.com/watch?v=5Dnb0bvK24o)
+## 🎬 Video Demonstration
 
-## Installation
+Watch a step-by-step walkthrough of WinSQLite Editor on YouTube:
 
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/srdzank/SQLite-Editor.git
-    ```
+[![Watch the video](https://img.youtube.com/vi/KNKUBTin_FY/maxresdefault.jpg)](https://www.youtube.com/watch?v=KNKUBTin_FY)
 
-2. Navigate to the project directory:
-    ```sh
-    cd SQLite-Editor
-    ```
+*(Click the thumbnail above to open the video)*
 
-## Usage
+---
 
-1. Open the application.
-2. Click on "Open Database" to load your SQLite database file.
-3. Navigate through the database structure to view tables, indexes, and field data.
-4. Use the SQL editor to write and execute SQL statements with autocomplete and syntax highlighting features.
+## 🛠️ Building from Source
 
-## Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository: [https://github.com/srdzank/SQLite-Editor.git](https://github.com/srdzank/SQLite-Editor.git).
-2. Create your feature branch:
-    ```sh
-    git checkout -b feature/AmazingFeature
-    ```
-3. Commit your changes:
-    ```sh
-    git commit -m 'Add some AmazingFeature'
-    ```
-4. Push to the branch:
-    ```sh
-    git push origin feature/AmazingFeature
-    ```
-5. Open a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgements
-
-- Thank you to all contributors and users for their support.
-
-## Contact
-
-For any inquiries or feedback, please contact us at [srdzan.kostenarov@gmail.com](mailto:srdzan.kostenarov@gmail.com).
-
-
-### Support My Project
-If you find my work helpful, consider donating to support my project!
+### Prerequisites
+* **Windows 10/11**
+* **Qt 6.x** development environment
+* **CMake 3.16+**
+* C++17 or C++20 compatible compiler (MSVC 2022 / MinGW)
 
