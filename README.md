@@ -19,7 +19,7 @@
 
 ## 🌟 Overview
 
-**SQLite Editor** is a high-performance desktop application designed for seamless SQLite database administration. Built natively with C++ and Qt 6, it delivers an ultra-responsive user experience with instant startup times, low memory consumption, and smooth handling of large database files.
+**WinSQLite Editor** is a high-performance desktop application designed for seamless SQLite database administration. Built natively with C++ and Qt 6, it delivers an ultra-responsive user experience with instant startup times, low memory consumption, and smooth handling of large database files.
 
 ---
 
@@ -57,7 +57,7 @@ Download the standalone `.zip` or `.exe` directly from our [GitHub Releases](htt
 
 ## 🎬 Video Demonstration
 
-Watch a step-by-step walkthrough of SQLite Editor on YouTube:
+Watch a step-by-step walkthrough of WinSQLite Editor on YouTube:
 
 [![Watch the video](https://img.youtube.com/vi/KNKUBTin_FY/maxresdefault.jpg)](https://www.youtube.com/watch?v=KNKUBTin_FY)
 
