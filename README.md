@@ -77,8 +77,8 @@ Watch a step-by-step walkthrough of WinSQLite Editor on YouTube:
 
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/srdzank/SQLite-Editor.git](https://github.com/srdzank/SQLite-Editor.git)
-cd SQLite-Editor
+git clone [https://github.com/srdzank/SQLite-Editor.git](https://github.com/srdzank/WinSQLite-Editor.git)
+cd WinSQLite-Editor
 
 # 2. Configure build directory with CMake
 cmake -B build -DCMAKE_PREFIX_PATH="C:/Qt/6.x/msvc2019_64"
