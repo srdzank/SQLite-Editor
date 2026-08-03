@@ -73,15 +73,3 @@ Watch a step-by-step walkthrough of WinSQLite Editor on YouTube:
 * **CMake 3.16+**
 * C++17 or C++20 compatible compiler (MSVC 2022 / MinGW)
 
-### Steps
-
-```bash
-# 1. Clone the repository
-git clone [https://github.com/srdzank/SQLite-Editor.git](https://github.com/srdzank/WinSQLite-Editor.git)
-cd WinSQLite-Editor
-
-# 2. Configure build directory with CMake
-cmake -B build -DCMAKE_PREFIX_PATH="C:/Qt/6.x/msvc2019_64"
-
-# 3. Build the project
-cmake --build build --config Release
