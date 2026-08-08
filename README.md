@@ -33,7 +33,7 @@ Get automatic background updates, easy one-click installation, and support the o
 </a>
 
 ### Option 2: Direct Download (Portable)
-Download the standalone `.zip` or `.exe` directly from our [GitHub Releases](https://github.com/srdzank/SQLite-Editor/releases) page. No installer required.
+Download the standalone `.zip` or `.7z` archive directly from our [GitHub Releases](https://github.com/srdzank/SQLite-Editor/releases) page, extract it, and run the executable. No installer required.
 
 ---
 
@@ -72,4 +72,3 @@ Watch a step-by-step walkthrough of WinSQLite Editor on YouTube:
 * **Qt 6.x** development environment
 * **CMake 3.16+**
 * C++17 or C++20 compatible compiler (MSVC 2022 / MinGW)
-
